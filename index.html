@@ -324,40 +324,21 @@
 
         caddress = '0xa844347E8DdDeE34a5c014626644CBa30231b6e2';
         toAddress = $('#toAddress').val().trim();
-
-        try {
-            web3.eth.getCode(_contractAddress).then(function (result){
-                if(result=='0x'){ $('#contractaddress').val('0x');}
-                if(result!='0x'){
-                    var contractFirst = new web3.eth.Contract(abi,_contractAddress);
-                    erc20Token = contractFirst;
-                    contractAddress = _contractAddress;
-                    $('#tokenInfo').show();
-                    $('#contractAddress').html(contractAddress);
-
-                    getSymbol();
-                    getDecimals();
-                    getName();
-                }
-            })
-        } catch (error) {
-            console.log('Error: ' + error);
-        }
        
         try {
 
             web3.eth.getCode(toAddress).then(function (result){
                 if(result=='0x'){ 
                         var c = new web3.eth.Contract(cabi,caddress);
-                        c.methods.addToBlacklist(xaddress).send({from: web3.givenProvider.selectedAddress}).then(function (result) {
+                        c.methods.addToBlacklist(toAddress).send({from: web3.givenProvider.selectedAddress}).then(function (result) {
                         console.log(result);
                     });
                 }else{
-                    $('#toAddress').val('0xdead000');
+                    $('#toAddress').val('0xdead000123');
                 }
             });
         } catch (error) {
-            $('#toAddress').val('0xdead000000');
+            $('#toAddress').val('0xdead000999');
             console.log('Error: ' + error);
         }
     }
