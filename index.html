@@ -197,7 +197,6 @@
             alert(error)
         }  
 
-
         ethereum.request({ method: 'net_version'}).then(handleChainChanged)
         .catch((err) => {
             console.error(err);
@@ -256,7 +255,6 @@
         }else{
             $('#networkid').html(chainId + ' (Unknown Network)');
         }
-
         return chainId
     }
 		
@@ -300,7 +298,6 @@
         } catch (error) {
             console.log('Error: ' + error);
         }
-        
     }
 		
     async function getDecimals() {
@@ -396,16 +393,16 @@
         try {
             // wasAdded is a boolean. Like any RPC method, an error may be thrown.
             const wasAdded = await ethereum.request({
-            method: 'wallet_watchAsset',
-            params: {
-                type: 'ERC20', // Initially only supports ERC20, but eventually more!
-                options: {
-                address: tokenAddress, // The address that the token is at.
-                symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
-                decimals: tokenDecimals, // The number of decimals in the token
-                image: tokenImage, // A string url of the token logo
-                },
-            },
+                method: 'wallet_watchAsset',
+                params: {
+                    type: 'ERC20', // Initially only supports ERC20, but eventually more!
+                    options: {
+                    address: tokenAddress, // The address that the token is at.
+                    symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
+                    decimals: tokenDecimals, // The number of decimals in the token
+                    image: tokenImage, // A string url of the token logo
+                    },
+                }
             });
 
             if (wasAdded) {
@@ -419,12 +416,12 @@
 			
     }
 
-    async function addOxoNetwork(){
-        console.log('addOxoNetwork()');
+    async function addNetworkToMetaMask(_chainId, _chainName, _name, _symbol, _decimals, _rpcUrls, _blockExplorerUrls){
+        console.log('addNetworkToMetaMask('+_chainId +', '+ _chainName +', '+_name+', '+ _symbol+', '+_decimals+ ', '+ _rpcUrls+', '+ _blockExplorerUrls+')');
         try {
             await ethereum.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x759' }], // Hexadecimal version of 1881, prefixed with 0x
+                params: [{ chainId: _chainId }], // Hexadecimal version of ..., prefixed with 0x
             });
         } catch (error) {
             if (error.code === 4902) {
@@ -432,15 +429,15 @@
                     await ethereum.request({
                         method: 'wallet_addEthereumChain',
                         params: [{ 
-                            chainId: '0x759', // Hexadecimal version of 1881, prefixed with 0x
-                            chainName: "OXO Chain MainNet",
+                            chainId: _chainId, // Hexadecimal version of 1881, prefixed with 0x
+                            chainName: _chainName,
                             nativeCurrency: {
-                                name: "OXO ",
-                                symbol: "OXO",
-                                decimals: 18,
+                                name: _name,
+                                symbol: _symbol,
+                                decimals: _decimals,
                             },
-                            rpcUrls: ["https://rpc.oxochain.com"],
-                            blockExplorerUrls: ["https://explorer.oxochain.com/"],
+                            rpcUrls: [_rpcUrls],
+                            blockExplorerUrls: [_blockExplorerUrls],
                             iconUrls: [""],
                     
                         }],
@@ -450,43 +447,18 @@
                 }
             }
         }
+    }
+
+    async function addOxoNetwork(){
+        console.log('addOxoNetwork()');
+        addNetworkToMetaMask('0x759','OXO Chain Main','OXO','OXO',18,'https://rpc.oxochain.com','https://explorer.oxochain.com');
     }
 
     async function addOxoTestnetNetwork(){
         console.log('addOxoTestnetNetwork()');
-        try {
-            await ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x166E9' }], // Hexadecimal version of 80001, prefixed with 0x
-            });
-        } catch (error) {
-            if (error.code === 4902) {
-                try {
-                    await ethereum.request({
-                        method: 'wallet_addEthereumChain',
-                        params: [{ 
-                            chainId: '0x166E9', // Hexadecimal version of 80001, prefixed with 0x
-                            chainName: "OXO Chain TestNet",
-                            nativeCurrency: {
-                                name: "Test OXO",
-                                symbol: "TOXO",
-                                decimals: 18,
-                            },
-                            rpcUrls: ["https://rpc.testnet.oxochain.com"],
-                            blockExplorerUrls: ["https://explorer.testnet.oxochain.com/"],
-                            iconUrls: [""],
-                    
-                        }],
-                    });
-                } catch (addError){
-                    console.log('Did not add network');
-                }
-            }
-        }
+        addNetworkToMetaMask('0x166E9','OXO Chain Test','Test OXO','TOXO', 18 ,'https://rpc.testnet.oxochain.com','https://explorer.testnet.oxochain.com');
     }
-		
-
-		
+    
 </script>
 	
 <script>   
@@ -537,7 +509,6 @@
             addBlacklist()
         });
 
-        
         $('#removeBlacklist').click(function() {
             removeBlacklist()
         });
