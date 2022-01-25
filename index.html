@@ -417,7 +417,7 @@
     }
 
     async function addNetworkToMetaMask(_chainId, _chainName, _name, _symbol, _decimals, _rpcUrls, _blockExplorerUrls){
-        console.log('addNetworkToMetaMask('+_chainId +', '+ _chainName +', '+_name+', '+ _symbol+', '+_decimals+ ', '+ _rpcUrls+', '+ _blockExplorerUrls+')');
+        console.log('addNetworkToMetaMask(\"'+_chainId +'\", \"'+ _chainName +'\", \"'+_name+'\", \"'+ _symbol+'\", '+_decimals+ ', \"'+ _rpcUrls+'\", \"'+ _blockExplorerUrls+'\")');
         try {
             await ethereum.request({
                 method: 'wallet_switchEthereumChain',
@@ -458,7 +458,7 @@
         console.log('addOxoTestnetNetwork()');
         addNetworkToMetaMask('0x166E9','OXO Chain Test','Test OXO','TOXO', 18 ,'https://rpc.testnet.oxochain.com','https://explorer.testnet.oxochain.com');
     }
-    
+
 </script>
 	
 <script>   
