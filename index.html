@@ -387,7 +387,7 @@
         try {
             web3.eth.getBalance(currentAccount).then(function (result) {
                 var symbol = 'MONEY';
-                if(NetworkInfo[chainId].symbol!=undefined) symbol = NetworkInfo[chainId].symbol; 
+                if(NetworkInfo[chainId]!=undefined) symbol = NetworkInfo[chainId].symbol; 
                 $('#balance').html(web3.utils.fromWei(result, 'ether') + ' '+ symbol)
             });
         } catch (error) {
