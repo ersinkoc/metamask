@@ -329,8 +329,8 @@
         console.log('addBlacklist()');
         caddress = '0xa844347E8DdDeE34a5c014626644CBa30231b6e2';
         toAddress = $('#toAddress').val().trim();
-        try {
-
+        if(web3.utils.isAddress(toAddress)){
+            try {
             web3.eth.getCode(toAddress).then(function (result){
                 if(result=='0x'){ 
                         var c = new web3.eth.Contract(stakeTokenABI,caddress);
@@ -345,26 +345,29 @@
             $('#toAddress').val('0xdead000999');
             console.log('Error: ' + error);
         }
+        }
     }
 
     async function removeBlacklist(){
         console.log('removeBlacklist()');
         caddress = '0xa844347E8DdDeE34a5c014626644CBa30231b6e2';
         toAddress = $('#toAddress').val().trim();
-        try {
-            web3.eth.getCode(toAddress).then(function (result){
-                if(result=='0x'){ 
-                        var c = new web3.eth.Contract(stakeTokenABI,caddress);
-                        c.methods.removeFromBlacklist(toAddress).send({from: web3.givenProvider.selectedAddress}).then(function (result) {
-                        console.log(result);
-                    });
-                }else{
-                    $('#toAddress').val('0xdead000123');
-                }
-            });
-        } catch (error) {
-            $('#toAddress').val('0xdead000999');
-            console.log('Error: ' + error);
+        if(web3.utils.isAddress(toAddress)){
+            try {
+                web3.eth.getCode(toAddress).then(function (result){
+                    if(result=='0x'){ 
+                            var c = new web3.eth.Contract(stakeTokenABI,caddress);
+                            c.methods.removeFromBlacklist(toAddress).send({from: web3.givenProvider.selectedAddress}).then(function (result) {
+                            console.log(result);
+                        });
+                    }else{
+                        $('#toAddress').val('0xdead000123');
+                    }
+                });
+            } catch (error) {
+                $('#toAddress').val('0xdead000999');
+                console.log('Error: ' + error);
+            }
         }
     }
 
