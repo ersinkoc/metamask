@@ -433,7 +433,6 @@
         console.log('addNetworkToMetaMask(Arguments)');
         console.log(arguments);
         if(NetworkInfo[_chainId]!=undefined){
-
             try {
                 await ethereum.request({
                     method: 'wallet_switchEthereumChain',
@@ -445,7 +444,7 @@
                         await ethereum.request({
                             method: 'wallet_addEthereumChain',
                             params: [{ 
-                                chainId: _chainId, // Hexadecimal version of 1881, prefixed with 0x
+                                chainId: NetworkInfo[_chainId].chainId, // Hexadecimal version of 1881, prefixed with 0x
                                 chainName: NetworkInfo[_chainId].chainName,
                                 nativeCurrency: {
                                     name: NetworkInfo[_chainId].name,
