@@ -100,15 +100,19 @@
 
     let currentAccount = null;
     let web3;
-    let ERC20ABI;
     let contractAddress;
     let chainId;
+
+    let ERC20ABI;
+    let erc20Token;
+
     let contractSymbol;
     let contractDecimals;
     let contractFirst;
     let contractName;
+
+    let testContractAddress = '0xa844347E8DdDeE34a5c014626644CBa30231b6e2';
     let stakeTokenABI;
-    let erc20Token;
 
     const Networks = {
         1: 'Ethereum Main Net',
@@ -327,15 +331,13 @@
 
     async function addBlacklist(){
         console.log('addBlacklist()');
-        caddress = '0xa844347E8DdDeE34a5c014626644CBa30231b6e2';
         toAddress = $('#toAddress').val().trim();
         if(web3.utils.isAddress(toAddress)){
             try {
             web3.eth.getCode(toAddress).then(function (result){
                 if(result=='0x'){ 
-                        var c = new web3.eth.Contract(stakeTokenABI,caddress);
+                        var c = new web3.eth.Contract(stakeTokenABI,testContractAddress);
                         c.methods.addToBlacklist(toAddress).send({from: web3.givenProvider.selectedAddress}).then(function (result) {
-                        if(result.code == 4001) console.log('User denied transaction signature');
                         console.log(result);
                     });
                 }else{
@@ -351,15 +353,13 @@
 
     async function removeBlacklist(){
         console.log('removeBlacklist()');
-        caddress = '0xa844347E8DdDeE34a5c014626644CBa30231b6e2';
         toAddress = $('#toAddress').val().trim();
         if(web3.utils.isAddress(toAddress)){
             try {
                 web3.eth.getCode(toAddress).then(function (result){
                     if(result=='0x'){ 
-                            var c = new web3.eth.Contract(stakeTokenABI,caddress);
+                            var c = new web3.eth.Contract(stakeTokenABI,testContractAddress);
                             c.methods.removeFromBlacklist(toAddress).send({from: web3.givenProvider.selectedAddress}).then(function (result) {
-                            if(result.code == 4001) console.log('User denied transaction signature');
                             console.log(result);
                         });
                     }else{
