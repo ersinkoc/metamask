@@ -335,6 +335,7 @@
                 if(result=='0x'){ 
                         var c = new web3.eth.Contract(stakeTokenABI,caddress);
                         c.methods.addToBlacklist(toAddress).send({from: web3.givenProvider.selectedAddress}).then(function (result) {
+                        if(result.code == 4001) console.log('User denied transaction signature');
                         console.log(result);
                     });
                 }else{
@@ -358,6 +359,7 @@
                     if(result=='0x'){ 
                             var c = new web3.eth.Contract(stakeTokenABI,caddress);
                             c.methods.removeFromBlacklist(toAddress).send({from: web3.givenProvider.selectedAddress}).then(function (result) {
+                            if(result.code == 4001) console.log('User denied transaction signature');
                             console.log(result);
                         });
                     }else{
