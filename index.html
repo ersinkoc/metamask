@@ -171,11 +171,8 @@
             $('#networkid').html('...');
         } else if (accounts[0] !== currentAccount) {
             currentAccount = accounts[0];
-
-            
             $('#enableMetamask').html(currentAccount);
             $('#status').html('');
-            
             if(currentAccount != null) {
                 // Set the button label
                 $('#enableMetamask').html(currentAccount);
@@ -498,7 +495,7 @@
             $('#metaicon').removeClass('meta-gray')
             $('#metaicon').addClass('meta-normal')
             $('#enableMetamask').attr('disabled',false)
-            connect() // Make sure the connected wallet is being returned
+            //connect() // Make sure the connected wallet is being returned
         } else {
             $('#enableMetamask').attr('disabled',true)
             $('#metaicon').removeClass('meta-normal')
@@ -538,9 +535,6 @@
         $('#totalRewarded').click(function() {
             totalRewarded()
         });
-
-        
-
 
         // try {     
         //     //web3 = new Web3(new Web3.providers.HttpProvider("https://rpc.testnet.oxochain.com"));
