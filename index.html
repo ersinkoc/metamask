@@ -436,6 +436,7 @@
     }
 
     async function addNetworkToMetaMask(_chainId, _chainName, _name, _symbol, _decimals, _rpcUrls, _blockExplorerUrls){
+        console.log(arguments);
         console.log('addNetworkToMetaMask(\"'+_chainId +'\", \"'+ _chainName +'\", \"'+_name+'\", \"'+ _symbol+'\", '+_decimals+ ', \"'+ _rpcUrls+'\", \"'+ _blockExplorerUrls+'\")');
         try {
             await ethereum.request({
