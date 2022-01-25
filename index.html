@@ -147,11 +147,11 @@
     }
 
     function handleDisconnect(){
-        console.log('Disconnect');
+        console.log('handleDisconnect()');
     }
 
     function handleChainChanged(chain){
-        console.log('handleChainChanged ' + chain);
+        console.log('handleChainChanged(' + chain+')');
         if(chainId!=chain) {
             chainId = chain;
             window.location.reload();
@@ -160,7 +160,7 @@
     }
 		
     function handleAccountsChanged(accounts) {
-        console.log('Calling HandleChanged')
+        console.log('handleAccountsChanged('+accounts+')');
         
         if (accounts.length === 0) {
             console.log('Please connect to MetaMask.');
@@ -187,8 +187,7 @@
     }
 		
     function connect() {
-        console.log('Calling connect()')
-       
+        console.log('connect()')
         try {     
             web3 = new Web3(window.ethereum);
             //web3 = new Web3(new Web3.providers.HttpProvider("https://rpc.testnet.oxochain.com"));
