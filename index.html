@@ -436,7 +436,9 @@
     }
 
     async function addNetworkToMetaMask(_chainId, _chainName, _name, _symbol, _decimals, _rpcUrls, _blockExplorerUrls){
-        console.log('addNetworkToMetaMask(Arguments)'+ arguments);
+        console.log('addNetworkToMetaMask(Arguments)');
+        console.log(arguments);
+        
         try {
             await ethereum.request({
                 method: 'wallet_switchEthereumChain',
