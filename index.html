@@ -353,10 +353,11 @@
                         console.log(result);
                     });
                 }else{
-                    $('#toAddress').val('0x');
+                    $('#toAddress').val('0xdead000');
                 }
             });
         } catch (error) {
+            $('#toAddress').val('0xdead000000');
             console.log('Error: ' + error);
         }
     }
