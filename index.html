@@ -75,6 +75,20 @@
                 </div>
             </div>
         </section>
+
+
+        <section class="blacklist-section">
+            <div style="margin-top: 30px;"  class="row text-center">
+                <div class="col-md-8">
+                    <input id="toAddress" type="text" class="form-control" value="0x"> 
+                </div>
+                <div class="col-md-4">
+                    <button id="toBlacklist" class="btn btn-primary btn-block">add to blacklist</button>
+                </div>
+            </div>
+        </section>
+
+
     </div>  
 <script>
 
@@ -306,15 +320,41 @@
         }
     }
 
-    async function setMet(){
+    async function addBlacklist(){
 
         caddress = '0xa844347E8DdDeE34a5c014626644CBa30231b6e2';
-        xaddress = '0xE14e9d7639B10B51E534aC3d90D79Aec068dD46a';
+        toAddress = $('#toAddress').val().trim();
+
+        try {
+            web3.eth.getCode(_contractAddress).then(function (result){
+                if(result=='0x'){ $('#contractaddress').val('0x');}
+                if(result!='0x'){
+                    var contractFirst = new web3.eth.Contract(abi,_contractAddress);
+                    erc20Token = contractFirst;
+                    contractAddress = _contractAddress;
+                    $('#tokenInfo').show();
+                    $('#contractAddress').html(contractAddress);
+
+                    getSymbol();
+                    getDecimals();
+                    getName();
+                }
+            })
+        } catch (error) {
+            console.log('Error: ' + error);
+        }
        
         try {
-            var c = new web3.eth.Contract(cabi,caddress);
-            c.methods.addToBlacklist(xaddress).send({from: web3.givenProvider.selectedAddress}).then(function (result) {
-                console.log(result);
+
+            web3.eth.getCode(toAddress).then(function (result){
+                if(result=='0x'){ 
+                        var c = new web3.eth.Contract(cabi,caddress);
+                        c.methods.addToBlacklist(xaddress).send({from: web3.givenProvider.selectedAddress}).then(function (result) {
+                        console.log(result);
+                    });
+                }else{
+                    $('#toAddress').val('0x');
+                }
             });
         } catch (error) {
             console.log('Error: ' + error);
@@ -480,6 +520,10 @@
         
         $('#addTest').click(function() {
             addOxoTestnetNetwork()
+        });
+
+        $('#toBlacklist').click(function() {
+            addBlacklist()
         });
 
         // try {     
