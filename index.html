@@ -112,6 +112,19 @@
     let testContractAddress = '0xa844347E8DdDeE34a5c014626644CBa30231b6e2';
     let stakeTokenABI;
 
+    const NetworkInfo = {
+        1: { 
+            "name": "Ethereum Main Net",
+            "chainid": 1,
+            "symbol": "ETH"
+            },
+        1881: {
+            "name": "OXO Chain Main",
+            "chainid": 1881,
+            "symbol": "OXO"
+        }
+    }
+
     const Networks = {
         1: 'Ethereum Main Net',
         2: 'Ethereum Deprecated Morden test network',
@@ -438,7 +451,7 @@
     async function addNetworkToMetaMask(_chainId, _chainName, _name, _symbol, _decimals, _rpcUrls, _blockExplorerUrls){
         console.log('addNetworkToMetaMask(Arguments)');
         console.log(arguments);
-        
+
         try {
             await ethereum.request({
                 method: 'wallet_switchEthereumChain',
