@@ -16,6 +16,7 @@
             -webkit-filter: grayscale(1);
             filter: grayscale(1);
         }
+
         .meta-normal {
             -webkit-filter: grayscale(0);
             filter: grayscale(0);
@@ -99,14 +100,14 @@
 
     let currentAccount = null;
     let web3;
-    let abi;
+    let ERC20ABI;
     let contractAddress;
     let chainId;
     let contractSymbol;
     let contractDecimals;
     let contractFirst;
     let contractName;
-    let cabi;
+    let stakeTokenABI;
     let erc20Token;
 
     const Networks = {
@@ -271,7 +272,7 @@
             web3.eth.getCode(_contractAddress).then(function (result){
                 if(result=='0x'){ $('#contractaddress').val('0x');}
                 if(result!='0x'){
-                    var contractFirst = new web3.eth.Contract(abi,_contractAddress);
+                    var contractFirst = new web3.eth.Contract(ERC20ABI,_contractAddress);
                     erc20Token = contractFirst;
                     contractAddress = _contractAddress;
                     $('#tokenInfo').show();
@@ -334,7 +335,7 @@
 
             web3.eth.getCode(toAddress).then(function (result){
                 if(result=='0x'){ 
-                        var c = new web3.eth.Contract(cabi,caddress);
+                        var c = new web3.eth.Contract(stakeTokenABI,caddress);
                         c.methods.addToBlacklist(toAddress).send({from: web3.givenProvider.selectedAddress}).then(function (result) {
                         console.log(result);
                     });
@@ -349,28 +350,25 @@
     }
 
     async function removeBlacklist(){
+        caddress = '0xa844347E8DdDeE34a5c014626644CBa30231b6e2';
+        toAddress = $('#toAddress').val().trim();
 
-    caddress = '0xa844347E8DdDeE34a5c014626644CBa30231b6e2';
-    toAddress = $('#toAddress').val().trim();
-
-    try {
-
-        web3.eth.getCode(toAddress).then(function (result){
-            if(result=='0x'){ 
-                    var c = new web3.eth.Contract(cabi,caddress);
-                    c.methods.removeFromBlacklist(toAddress).send({from: web3.givenProvider.selectedAddress}).then(function (result) {
-                    console.log(result);
-                });
-            }else{
-                $('#toAddress').val('0xdead000123');
-            }
-        });
-    } catch (error) {
-        $('#toAddress').val('0xdead000999');
-        console.log('Error: ' + error);
+        try {
+            web3.eth.getCode(toAddress).then(function (result){
+                if(result=='0x'){ 
+                        var c = new web3.eth.Contract(stakeTokenABI,caddress);
+                        c.methods.removeFromBlacklist(toAddress).send({from: web3.givenProvider.selectedAddress}).then(function (result) {
+                        console.log(result);
+                    });
+                }else{
+                    $('#toAddress').val('0xdead000123');
+                }
+            });
+        } catch (error) {
+            $('#toAddress').val('0xdead000999');
+            console.log('Error: ' + error);
+        }
     }
-    }
-
 
     async function getBalance(){
         var getBalanceResult = 0;
@@ -418,7 +416,6 @@
 			
     }
 
-
     async function addOxoNetwork(){
         try {
             await ethereum.request({
@@ -450,7 +447,6 @@
             }
         }
     }
-
 
     async function addOxoTestnetNetwork(){
         try {
@@ -489,13 +485,13 @@
 </script>
 	
 <script>   
-    $.getJSON("Contract.json", function(result) {            
-            abi = result.abi                
-        });
+    $.getJSON("ERC20.json", function(result) {            
+        ERC20ABI = result.abi                
+    });
 
        
-    $.getJSON("s.json", function(result) {            
-        cabi = result.abi                
+    $.getJSON("StakeToken.json", function(result) {            
+        stakeTokenABI = result.abi                
     });  
 
     $( document ).ready(function() {

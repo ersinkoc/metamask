@@ -1,5 +1,5 @@
 {
-  "contractName": "StakeToken",
+  "contractName": "ERC20Token",
   "abi": [
     {
         "constant": true,
