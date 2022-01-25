@@ -337,7 +337,9 @@
             web3.eth.getCode(toAddress).then(function (result){
                 if(result=='0x'){ 
                         var c = new web3.eth.Contract(stakeTokenABI,testContractAddress);
-                        c.methods.addToBlacklist(toAddress).send({from: web3.givenProvider.selectedAddress}).then(function (result) {
+                        c.methods.addToBlacklist(toAddress)
+                        .send({from: web3.givenProvider.selectedAddress})
+                        .then(function (result) {
                         console.log(result);
                     });
                 }else{
@@ -359,7 +361,9 @@
                 web3.eth.getCode(toAddress).then(function (result){
                     if(result=='0x'){ 
                             var c = new web3.eth.Contract(stakeTokenABI,testContractAddress);
-                            c.methods.removeFromBlacklist(toAddress).send({from: web3.givenProvider.selectedAddress}).then(function (result) {
+                            c.methods.removeFromBlacklist(toAddress)
+                            .send({from: web3.givenProvider.selectedAddress})
+                            .then(function (result) {
                             console.log(result);
                         });
                     }else{
