@@ -87,7 +87,7 @@
                     <button id="removeBlacklist" class="btn btn-secondary btn-block">remove</button>
                 </div>
                 <div class="col-md-6" style="margin-top: 30px;"><span id="totalRewardedSpan">0</span></div>
-                <div class="col-md-6" style="margin-top: 30px;"><button id="totalRewarded" class="btn btn-primary btn-block">totalRewarded </button></div>
+                <div class="col-md-6" style="margin-top: 30px;"><button id="totalRewarded" class="btn btn-primary btn-block">totalRewarded</button></div>
 
             </div>
         </section>
@@ -119,8 +119,8 @@
             "name": "Ether",
             "symbol": "ETH",
             "decimals": 18,
-            "rpcUrls": "https://rpc.",
-            "blockExplorerUrls": "https://"
+            "rpcUrls": "https://mainnet.infura.io/v3/b38821aa1dfb47fe8bf1adad521e1afc",
+            "blockExplorerUrls": "https://etherscan.io"
             },
         1881: {
             "chainName": "OXO Chain Main",
@@ -169,10 +169,9 @@
             $('#status').html('');
             if(currentAccount != null) {
                 // Set the button label
-                $('#enableMetamask').html(currentAccount);
-            
-            getBalance(currentAccount);
-            getChainId();
+                $('#enableMetamask').html(currentAccount);                
+                getBalance(currentAccount);
+                getChainId();
             }
         }
         console.log('WalletAddress in HandleAccountChanged ['+currentAccount+']')
@@ -433,7 +432,7 @@
         console.log('addNetworkToMetaMask(Arguments)');
         console.log(arguments);
         if(NetworkInfo[_chainId]!=undefined){
-            var HexChainId = web3.utils.toHex(_chainId);
+            var HexChainId = web3.utils.toHex(_chainId); //
             try {
                 await ethereum.request({
                     method: 'wallet_switchEthereumChain',
@@ -445,7 +444,7 @@
                         await ethereum.request({
                             method: 'wallet_addEthereumChain',
                             params: [{ 
-                                chainId: HexChainId, // Hexadecimal version of 1881, prefixed with 0x
+                                chainId: HexChainId, // Hexadecimal version of ... , prefixed with 0x
                                 chainName: NetworkInfo[_chainId].chainName,
                                 nativeCurrency: {
                                     name: NetworkInfo[_chainId].name,
@@ -468,15 +467,14 @@
     }
 
     async function addOxoNetwork(){
-        console.log('addOxoNetwork()');
+        console.log('addOxoNetwork(1881)');
         addNetworkToMetaMask(1881);
     }
 
     async function addOxoTestnetNetwork(){
-        console.log('addOxoTestnetNetwork()');
+        console.log('addOxoTestnetNetwork(91881)');
         addNetworkToMetaMask(91881);
     }
-
 </script>
 	
 <script>   
