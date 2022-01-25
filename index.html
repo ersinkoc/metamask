@@ -119,8 +119,8 @@
             "name": "Ether",
             "symbol": "ETH",
             "decimals": 18,
-            "rpcUrls": "https://mainnet.infura.io/v3/b38821aa1dfb47fe8bf1adad521e1afc",
-            "blockExplorerUrls": "https://etherscan.io"
+            "rpcUrls": { 0: "https://mainnet.infura.io/v3/b38821aa1dfb47fe8bf1adad521e1afc" },
+            "blockExplorerUrls": { 0: "https://etherscan.io" }
             },
         1881: {
             "chainName": "OXO Chain Main",
@@ -128,17 +128,17 @@
             "name": "OXO",
             "symbol": "OXO",
             "decimals": 18,
-            "rpcUrls": "https://rpc.oxochain.com",
-            "blockExplorerUrls": "https://explorer.oxochain.com"
+            "rpcUrls": { 0: "https://rpc.oxochain.com" } ,
+            "blockExplorerUrls": { 0: "https://explorer.oxochain.com" }
         },
         91881: {
             "chainName": "OXO Chain Test",
-            "chainId": web3.utils.toHex(91881),
+            "chainId": 0x166E9,
             "name": "Test OXO",
             "symbol": "TOXO",
             "decimals": 18,
-            "rpcUrls": "https://rpc.testnet.oxochain.com",
-            "blockExplorerUrls": "https://explorer.testnet.oxochain.com"
+            "rpcUrls": { 0: "https://rpc.testnet.oxochain.com" } ,
+            "blockExplorerUrls": { 0: "https://explorer.testnet.oxochain.com" }
         }        
     }
 
@@ -448,8 +448,8 @@
                                     symbol: NetworkInfo[_chainId].symbol,
                                     decimals: NetworkInfo[_chainId].decimals,
                                 },
-                                rpcUrls: [NetworkInfo[_chainId].rpcUrls],
-                                blockExplorerUrls: [NetworkInfo[_chainId].blockExplorerUrls],
+                                rpcUrls: [NetworkInfo[_chainId].rpcUrls[0]],
+                                blockExplorerUrls: [NetworkInfo[_chainId].blockExplorerUrls[0]],
                                 iconUrls: [NetworkInfo[_chainId].iconUrls],
                             }],
                         });
