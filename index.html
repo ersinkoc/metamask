@@ -91,7 +91,7 @@
                     <button id="toBlacklist" class="btn btn-secondary btn-block">add to blacklist</button>
                     <button id="removeBlacklist" class="btn btn-danger btn-block">remove</button>
                 </div>
-                <div><span id="totalRewardedSpan"></span></div>
+                <div><span id="totalRewardedSpan">x</span></div>
                 <div class="col-md-12"><button id="totalRewarded" class="btn btn-primary btn-block">totalRewarded </button></div>
             </div>
         </section>
@@ -386,7 +386,7 @@
                 c.methods.totalRewarded()
                 .call()
                 .then(function (result) {
-                    $('#totalRewardedSpan').val(web3.utils.fromWei(result,'ether'));
+                    $('#totalRewardedSpan').html(web3.utils.fromWei(result,'ether'));
                     console.log(result);
                 });
             } catch (error) {
