@@ -62,7 +62,7 @@
                     <input id="contractaddress" type="text" class="form-control" value="0x"> 
                 </div>
                 <div class="col-md-4">
-                    <button id="getContractInfo" class="btn btn-primary btn-block">Get Token Info</button>
+                    <button id="getTokenInfo" class="btn btn-primary btn-block">Get Token Info</button>
                 </div>
                 <div class="col-md-12">0x01cE423BeD8Eca832Ffa9CD9aE8A3aB5a0FcBd10, 	0x54b45f2b3Db26D6D68A08B85AdDb01b70c02BD61</div>
             </div>
@@ -88,8 +88,8 @@
                     <input id="toAddress" type="text" class="form-control" value="0x"> 
                 </div>
                 <div class="col-md-4">
-                    <button id="toBlacklist" class="btn btn-primary btn-block">add to blacklist</button>
-                    <button id="removeBlacklist" class="btn btn-primary btn-block">remove</button>
+                    <button id="toBlacklist" class="btn btn-secondary btn-block">add to blacklist</button>
+                    <button id="removeBlacklist" class="btn btn-danger btn-block">remove</button>
                 </div>
             </div>
         </section>
@@ -258,8 +258,8 @@
         return chainId
     }
 		
-    async function getContractInfo() {
-        console.log('getContractInfo')
+    async function getTokenInfo() {
+        console.log('getTokenInfo')
         _contractAddress = $('#contractaddress').val().trim();
         $('#getName').html('');
         $('#getSymbol').html('');
@@ -513,8 +513,8 @@
             connect()
         });
 
-        $('#getContractInfo').click(function() {
-            getContractInfo()
+        $('#getTokenInfo').click(function() {
+            getTokenInfo()
         });
         
         $('#addToMetamask').click(function() {
