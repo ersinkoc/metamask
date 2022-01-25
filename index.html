@@ -114,51 +114,32 @@
 
     const NetworkInfo = {
         1: { 
-            "name": "Ethereum Main Net",
+            "chainName": "Ethereum Main Net",
             "chainid": 1,
-            "symbol": "ETH"
+            "name": "Ether",
+            "symbol": "ETH",
+            "decimals": 18,
+            "rpcUrls": "https://rpc.",
+            "blockExplorerUrls": "https://"
             },
         1881: {
-            "name": "OXO Chain Main",
-            "chainid": 1881,
-            "symbol": "OXO"
-        }
-    }
-
-    const Networks = {
-        1: 'Ethereum Main Net',
-        2: 'Ethereum Deprecated Morden test network',
-        3: 'Ethereum Ropsten test network',
-        4: 'Ethereum Rinkeby test network',
-        42: 'Ethereum Kovan test network',
-        4447: 'Truffle Develop Network',
-        5777: 'Ganache Blockchain',
-        1881: 'OxoChain Main Network',
-        91881: 'OxoChain Test Network',
-        60: 'GoChain Main',
-        56: 'Binance Smart Chain Main',
-        43114: 'Avalance C-Chain Main',
-        137: 'Polygon (MATIC) Main',
-        1666600000: 'Harmony ONE Main',
-        36900: 'Paradox Chain Main'
-    }
-
-    const MoneySymbol = {
-        1: 'ETH',
-        2: 'ETHtest',
-        3: 'ETHtest',
-        4: 'ETHtest',
-        42: 'ETHtest',
-        4447: 'TRUFFLE',
-        5777: 'GANACHE',
-        1881: 'OXO',
-        91881: 'TOXO',
-        60: 'GO',
-        56: 'BNB',
-        43114: 'AVAX',
-        137: 'MATIC',
-        1666600000: 'ONE',
-        36900: 'PDOX'
+            "chainName": "OXO Chain Main",
+            "chainid": '0x759',
+            "name": "OXO",
+            "symbol": "OXO",
+            "decimals": 18,
+            "rpcUrls": "https://rpc.oxochain.com",
+            "blockExplorerUrls": "https://explorer.oxochain.com"
+        },
+        91881: {
+            "chainName": "OXO Chain Test",
+            "chainid": '0x166E9',
+            "name": "Test OXO",
+            "symbol": "TOXO",
+            "decimals": 18,
+            "rpcUrls": "https://rpc.testnet.oxochain.com",
+            "blockExplorerUrls": "https://explorer.testnet.oxochain.com"
+        }        
     }
 
     function handleDisconnect(){
@@ -262,8 +243,8 @@
         chainId = await window.ethereum.networkVersion;
         console.log('Network ID: ' + chainId)
 
-        if(Networks[chainId]!=undefined) {
-            $('#networkid').html(chainId + ' ('+ Networks[chainId] +')');
+        if(NetworkInfo[chainId]!=undefined) {
+            $('#networkid').html(chainId + ' ('+ NetworkInfo[chainId].chainName +')');
         }else{
             $('#networkid').html(chainId + ' (Unknown Network)');
         }
@@ -406,7 +387,7 @@
         try {
             web3.eth.getBalance(currentAccount).then(function (result) {
                 var symbol = 'MONEY';
-                if(MoneySymbol[chainId]!=undefined) symbol = MoneySymbol[chainId]; 
+                if(NetworkInfo[chainId].symbol!=undefined) symbol = NetworkInfo[chainId].symbol; 
                 $('#balance').html(web3.utils.fromWei(result, 'ether') + ' '+ symbol)
             });
         } catch (error) {
@@ -448,49 +429,52 @@
 			
     }
 
-    async function addNetworkToMetaMask(_chainId, _chainName, _name, _symbol, _decimals, _rpcUrls, _blockExplorerUrls){
+    async function addNetworkToMetaMask(_chainId){
         console.log('addNetworkToMetaMask(Arguments)');
         console.log(arguments);
+        if(NetworkInfo[_chainId]!=undefined){
 
-        try {
-            await ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: _chainId }], // Hexadecimal version of ..., prefixed with 0x
-            });
-        } catch (error) {
-            if (error.code === 4902) {
-                try {
-                    await ethereum.request({
-                        method: 'wallet_addEthereumChain',
-                        params: [{ 
-                            chainId: _chainId, // Hexadecimal version of 1881, prefixed with 0x
-                            chainName: _chainName,
-                            nativeCurrency: {
-                                name: _name,
-                                symbol: _symbol,
-                                decimals: _decimals,
-                            },
-                            rpcUrls: [_rpcUrls],
-                            blockExplorerUrls: [_blockExplorerUrls],
-                            iconUrls: [""],
-                    
-                        }],
-                    });
-                } catch (addError){
-                    console.log('Did not add network');
+            try {
+                await ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: _chainId }], // Hexadecimal version of ..., prefixed with 0x
+                });
+            } catch (error) {
+                if (error.code === 4902) {
+                    try {
+                        await ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{ 
+                                chainId: _chainId, // Hexadecimal version of 1881, prefixed with 0x
+                                chainName: NetworkInfo[_chainId].chainName,
+                                nativeCurrency: {
+                                    name: NetworkInfo[_chainId].name,
+                                    symbol: NetworkInfo[_chainId].symbol,
+                                    decimals: NetworkInfo[_chainId].decimals,
+                                },
+                                rpcUrls: [NetworkInfo[_chainId].rpcUrls],
+                                blockExplorerUrls: [NetworkInfo[_chainId].blockExplorerUrls],
+                                iconUrls: [NetworkInfo[_chainId].iconUrls],
+                        
+                            }],
+                        });
+                    } catch (addError){
+                        console.log('Did not add network');
+                    }
                 }
             }
-        }
+        }        
+
     }
 
     async function addOxoNetwork(){
         console.log('addOxoNetwork()');
-        addNetworkToMetaMask('0x759','OXO Chain Main','OXO','OXO',18,'https://rpc.oxochain.com','https://explorer.oxochain.com');
+        addNetworkToMetaMask(1881);
     }
 
     async function addOxoTestnetNetwork(){
         console.log('addOxoTestnetNetwork()');
-        addNetworkToMetaMask('0x166E9','OXO Chain Test','Test OXO','TOXO', 18 ,'https://rpc.testnet.oxochain.com','https://explorer.testnet.oxochain.com');
+        addNetworkToMetaMask(91881);
     }
 
 </script>
