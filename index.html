@@ -437,7 +437,7 @@
             try {
                 await ethereum.request({
                     method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: _chainId }], // Hexadecimal version of ..., prefixed with 0x
+                    params: [{ chainId: NetworkInfo[_chainId].chainId }], // Hexadecimal version of ..., prefixed with 0x
                 });
             } catch (error) {
                 if (error.code === 4902) {
