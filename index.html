@@ -91,6 +91,8 @@
                     <button id="toBlacklist" class="btn btn-secondary btn-block">add to blacklist</button>
                     <button id="removeBlacklist" class="btn btn-danger btn-block">remove</button>
                 </div>
+                <div><span id="totalRewardedSpan"></span></div>
+                <div class="col-md-12"><button id="totalRewarded" class="btn btn-primary btn-block">totalRewarded </button></div>
             </div>
         </section>
 
@@ -376,6 +378,21 @@
             }
         }
     }
+    
+    async function totalRewarded(){
+        console.log('totalRewarded()');
+            try {
+                var c = new web3.eth.Contract(stakeTokenABI,testContractAddress);
+                c.methods.totalRewarded()
+                .call()
+                .then(function (result) {
+                    $('#totalRewardedSpan').val(web3.utils.fromWei(result,'ether'));
+                    console.log(result);
+                });
+            } catch (error) {
+                console.log('Error: ' + error);
+            }
+    }
 
     async function getBalance(){
         console.log('getBalance()');
@@ -521,6 +538,13 @@
         $('#removeBlacklist').click(function() {
             removeBlacklist()
         });
+
+        $('#totalRewarded').click(function() {
+            totalRewarded()
+        });
+
+        
+
 
         // try {     
         //     //web3 = new Web3(new Web3.providers.HttpProvider("https://rpc.testnet.oxochain.com"));
