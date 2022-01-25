@@ -218,6 +218,7 @@
     }
 
     function detectMetaMask() {
+        console.log('detectMetaMask()');
         if (typeof window.ethereum !== 'undefined') {
             ethereum.on('accountsChanged', handleAccountsChanged);
             ethereum.on('chainChanged', handleChainChanged);
@@ -230,6 +231,7 @@
     }
 		
     async function getBlockNumber() {
+        console.log('getBlockNumber()');
         const latestBlockNumber = await web3.eth.getBlockNumber()
     /*	try {
             var latestBlockNumber = await ethereum.request({
@@ -245,6 +247,7 @@
     }
 		
     async function getChainId() {
+        console.log('getChainId()');
         //chainId = await web3.eth.net.getId()
         chainId = await window.ethereum.networkVersion;
         console.log('Network ID: ' + chainId)
@@ -302,7 +305,7 @@
     }
 		
     async function getDecimals() {
-        console.log('getDecimals')
+        console.log('getDecimals()')
         try {
             erc20Token.methods.decimals().call().then(function (result) {                
                 $('#getDecimals').html(result);
@@ -314,7 +317,7 @@
     }
 		
     async function getName() {
-        console.log('getName')
+        console.log('getName()')
         try {
             erc20Token.methods.name().call().then(function (result) {                
                 $('#btnToken').html('Add  \"'+ result+'\" to Metamask');
@@ -327,10 +330,9 @@
     }
 
     async function addBlacklist(){
-
+        console.log('addBlacklist()');
         caddress = '0xa844347E8DdDeE34a5c014626644CBa30231b6e2';
         toAddress = $('#toAddress').val().trim();
-       
         try {
 
             web3.eth.getCode(toAddress).then(function (result){
@@ -350,9 +352,9 @@
     }
 
     async function removeBlacklist(){
+        console.log('removeBlacklist()');
         caddress = '0xa844347E8DdDeE34a5c014626644CBa30231b6e2';
         toAddress = $('#toAddress').val().trim();
-
         try {
             web3.eth.getCode(toAddress).then(function (result){
                 if(result=='0x'){ 
@@ -371,6 +373,7 @@
     }
 
     async function getBalance(){
+        console.log('getBalance()');
         var getBalanceResult = 0;
         try {
             web3.eth.getBalance(currentAccount).then(function (result) {
@@ -385,6 +388,7 @@
     }
 		
     async function addToMetamask(){
+        console.log('addToMetamask()');
         const tokenAddress = contractAddress;
         const tokenSymbol = contractSymbol;
         const tokenDecimals = contractDecimals;
@@ -417,6 +421,7 @@
     }
 
     async function addOxoNetwork(){
+        console.log('addOxoNetwork()');
         try {
             await ethereum.request({
                 method: 'wallet_switchEthereumChain',
@@ -449,6 +454,7 @@
     }
 
     async function addOxoTestnetNetwork(){
+        console.log('addOxoTestnetNetwork()');
         try {
             await ethereum.request({
                 method: 'wallet_switchEthereumChain',
@@ -485,11 +491,10 @@
 </script>
 	
 <script>   
-    $.getJSON("ERC20.json", function(result) {            
+    $.getJSON("ERC20.json", function(result) {      
         ERC20ABI = result.abi                
     });
 
-       
     $.getJSON("StakeToken.json", function(result) {            
         stakeTokenABI = result.abi                
     });  
