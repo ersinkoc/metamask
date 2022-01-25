@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+	<script src="https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Contract Control</title>
+</head>
+<body>
+    <style>
+        .meta-gray {
+            -webkit-filter: grayscale(1);
+            filter: grayscale(1);
+        }
+        .meta-normal {
+            -webkit-filter: grayscale(0);
+            filter: grayscale(0);
+        }
+    </style>
+    
+    <div class="container">
+        <div style="margin-top: 30px;" class="row text-center">
+            <div class="col-md-12">
+                <h2>Metamask + Web3 JS</h2>
+            </div>            
+        </div>
+        <div class="row text-center">
+            <div class="col-md-12">
+                <img id="metaicon" class="meta-gray" width="150" height="150" src="metamask-fox.png" alt="">
+            </div>
+        </div>
+        <div style="margin-top: 30px;" class="row text-center">
+            <div class="col-md-12">
+                <div id="div_networkid">Network ID: <span id="networkid"></span></div>
+                <br />
+                <button id="addMain" class="btn btn-success">Switch to OXO Chain Main</button>
+                <button id="addTest" class="btn btn-secondary">Switch to OXO Chain Test</button>
+                <br />
+                <br />
+
+                <div><button id="enableMetamask" class="btn btn-danger">Connect with Metamask</button>
+				</div>
+				<div id="div_balance">Balance: <span id="balance">0</span></div>
+				<div id="div_blocknumber">Last Block: <span id="blocknumber">...</span></div>
+				
+            </div>
+        </div>
+
+        <div class="row text-center">
+            <div class="col-md-12">
+                <span id="status"></span>
+            </div>
+        </div>
+        <section class="contract-section hidden">
+            <div style="margin-top: 30px;"  class="row text-center">
+                <div class="col-md-8">
+                    <input id="contractaddress" type="text" class="form-control" value="0x"> 
+                </div>
+                <div class="col-md-4">
+                    <button id="getContractInfo" class="btn btn-primary btn-block">Get Token Info</button>
+                </div>
+            </div>
+            <div style="margin-top: 30px;"  class="row" id="tokenInfo">
+                <div class="col-md-12">
+                    <h3>Token Info</h3>
+                    <span>Name: <i id="getName"></i></span><br />
+                    <span>Symbol: <i id="getSymbol"></i></span><br />
+					<span>Decimals: <i id="getDecimals"></i></span><br />
+                    <span>Address: <i id="contractAddress"></i></span><br /><br />
+                    <button id="addToMetamask" class="btn btn-warning"><span id="btnToken">Add Token to Metamask</span></button>
+                </div>
+            </div>
+        </section>
+    </div>  
+<script>
+
+    let currentAccount = null;
+    let web3;
+    let abi;
+    let contractAddress;
+    let chainId;
+    let contractSymbol;
+    let contractDecimals;
+    let contractFirst;
+    let contractName;
+    let cabi;
+    let erc20Token;
+
+    const Networks = {
+        1: 'Ethereum Main Net',
+        2: 'Ethereum Deprecated Morden test network',
+        3: 'Ethereum Ropsten test network',
+        4: 'Ethereum Rinkeby test network',
+        42: 'Ethereum Kovan test network',
+        4447: 'Truffle Develop Network',
+        5777: 'Ganache Blockchain',
+        1881: 'OxoChain Main Network',
+        91881: 'OxoChain Test Network',
+        60: 'GoChain Main',
+        56: 'Binance Smart Chain Main',
+        43114: 'Avalance C-Chain Main',
+        137: 'Polygon (MATIC) Main',
+        1666600000: 'Harmony ONE Main',
+        36900: 'Paradox Chain Main'
+    }
+
+    const MoneySymbol = {
+        1: 'ETH',
+        2: 'ETHtest',
+        3: 'ETHtest',
+        4: 'ETHtest',
+        42: 'ETHtest',
+        4447: 'TRUFFLE',
+        5777: 'GANACHE',
+        1881: 'OXO',
+        91881: 'TOXO',
+        60: 'GO',
+        56: 'BNB',
+        43114: 'AVAX',
+        137: 'MATIC',
+        1666600000: 'ONE',
+        36900: 'PDOX'
+    }
+
+    function handleDisconnect(){
+        console.log('Disconnect');
+    }
+
+    function handleChainChanged(chain){
+        console.log('handleChainChanged ' + chain);
+        if(chainId!=chain) {
+            chainId = chain;
+            window.location.reload();
+        }
+        
+    }
+		
+    function handleAccountsChanged(accounts) {
+        console.log('Calling HandleChanged')
+        
+        if (accounts.length === 0) {
+            console.log('Please connect to MetaMask.');
+            $('#enableMetamask').html('Connect with Metamask')
+            $('#balance').html('...');
+            $('#networkid').html('...');
+        } else if (accounts[0] !== currentAccount) {
+            currentAccount = accounts[0];
+
+            
+            $('#enableMetamask').html(currentAccount);
+            $('#status').html('');
+            
+            if(currentAccount != null) {
+                // Set the button label
+                $('#enableMetamask').html(currentAccount);
+            
+            getBalance(currentAccount);
+            getChainId();
+            }
+        }
+        console.log('WalletAddress in HandleAccountChanged ['+currentAccount+']')
+        
+    }
+		
+    function connect() {
+        console.log('Calling connect()')
+       
+        try {     
+            web3 = new Web3(window.ethereum);
+            //web3 = new Web3(new Web3.providers.HttpProvider("https://rpc.testnet.oxochain.com"));
+            getChainId();
+            getBlockNumber();
+        } catch (error) {
+            alert(error)
+        }  
+
+
+        ethereum.request({ method: 'net_version'}).then(handleChainChanged)
+        .catch((err) => {
+            console.error(err);
+        });
+        
+        ethereum.request({ method: 'eth_requestAccounts' }).then(handleAccountsChanged)
+        .catch((err) => {
+        if (err.code === 4001) {
+            // EIP-1193 userRejectedRequest error
+            // If this happens, the user rejected the connection request.
+            console.log('Please connect to MetaMask.');
+            $('#status').html('You refused to connect Metamask')
+        } else {
+            console.error(err);
+        }
+        });
+    }
+
+    function detectMetaMask() {
+        if (typeof window.ethereum !== 'undefined') {
+            ethereum.on('accountsChanged', handleAccountsChanged);
+            ethereum.on('chainChanged', handleChainChanged);
+            ethereum.on('disconnet', handleDisconnect);
+            console.log(ethereum);
+            return true
+        } else {                
+            return false
+        }
+    }
+		
+    async function getBlockNumber() {
+        const latestBlockNumber = await web3.eth.getBlockNumber()
+    /*	try {
+            var latestBlockNumber = await ethereum.request({
+            method: 'eth_blockNumber'
+            });
+        } catch (error) {
+            console.log('Error: ' + error);
+        }
+    */	
+        console.log('Block Number: ' +latestBlockNumber)
+        $('#blocknumber').html(latestBlockNumber);
+        return latestBlockNumber
+    }
+		
+    async function getChainId() {
+        //chainId = await web3.eth.net.getId()
+        chainId = await window.ethereum.networkVersion;
+        console.log('Network ID: ' + chainId)
+
+        if(Networks[chainId]!=undefined) {
+            $('#networkid').html(chainId + ' ('+ Networks[chainId] +')');
+        }else{
+            $('#networkid').html(chainId + ' (Unknown Network)');
+        }
+
+        return chainId
+    }
+		
+    async function getContractInfo() {
+        console.log('getContractInfo')
+        _contractAddress = $('#contractaddress').val().trim();
+        $('#getName').html('');
+        $('#getSymbol').html('');
+        $('#getDecimals').html('');
+        $('#getName').html('');
+        $('#btnToken').html('Add Token to Metamask');
+        $('#contractAddress').html('');
+        $('#tokenInfo').hide();
+        try {
+            web3.eth.getCode(_contractAddress).then(function (result){
+                if(result=='0x'){ $('#contractaddress').val('0x');}
+                if(result!='0x'){
+                    var contractFirst = new web3.eth.Contract(abi,_contractAddress);
+                    erc20Token = contractFirst;
+                    contractAddress = _contractAddress;
+                    $('#tokenInfo').show();
+                    $('#contractAddress').html(contractAddress);
+
+                    getSymbol();
+                    getDecimals();
+                    getName();
+                }
+            })
+        } catch (error) {
+            console.log('Error: ' + error);
+        }
+    }
+
+    async function getSymbol() {
+        console.log('getSymbol')
+        try {
+            erc20Token.methods.symbol().call().then(function (result) {                
+                $('#getSymbol').html(result);
+                contractSymbol = result;
+            });
+        } catch (error) {
+            console.log('Error: ' + error);
+        }
+        
+    }
+		
+    async function getDecimals() {
+        console.log('getDecimals')
+        try {
+            erc20Token.methods.decimals().call().then(function (result) {                
+                $('#getDecimals').html(result);
+                contractDecimals = result;
+            });
+        } catch (error) {
+            console.log('Error: ' + error);
+        }
+    }
+		
+    async function getName() {
+        console.log('getName')
+        try {
+            erc20Token.methods.name().call().then(function (result) {                
+                $('#btnToken').html('Add  \"'+ result+'\" to Metamask');
+                $('#getName').html(result);
+                contractName = result;
+            });
+        } catch (error) {
+            console.log('Error: ' + error);
+        }
+    }
+
+    async function setMet(){
+
+        caddress = '0xa844347E8DdDeE34a5c014626644CBa30231b6e2';
+        xaddress = '0xE14e9d7639B10B51E534aC3d90D79Aec068dD46a';
+       
+        try {
+            var c = new web3.eth.Contract(cabi,caddress);
+            c.methods.addToBlacklist(xaddress).send({from: web3.givenProvider.selectedAddress}).then(function (result) {
+                console.log(result);
+            });
+        } catch (error) {
+            console.log('Error: ' + error);
+        }
+    }
+
+    async function getBalance(){
+        var getBalanceResult = 0;
+        try {
+            web3.eth.getBalance(currentAccount).then(function (result) {
+                var symbol = 'MONEY';
+                if(MoneySymbol[chainId]!=undefined) symbol = MoneySymbol[chainId]; 
+                $('#balance').html(web3.utils.fromWei(result, 'ether') + ' '+ symbol)
+            });
+        } catch (error) {
+            console.log('Error: ' + error);
+        }
+        return getBalanceResult;
+    }
+		
+    async function addToMetamask(){
+        const tokenAddress = contractAddress;
+        const tokenSymbol = contractSymbol;
+        const tokenDecimals = contractDecimals;
+        const tokenImage = '';
+
+        try {
+            // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+            const wasAdded = await ethereum.request({
+            method: 'wallet_watchAsset',
+            params: {
+                type: 'ERC20', // Initially only supports ERC20, but eventually more!
+                options: {
+                address: tokenAddress, // The address that the token is at.
+                symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
+                decimals: tokenDecimals, // The number of decimals in the token
+                image: tokenImage, // A string url of the token logo
+                },
+            },
+            });
+
+            if (wasAdded) {
+            console.log('Thanks for your interest!');
+            } else {
+            console.log('Your loss!');
+            }
+        } catch (error) {
+            console.log(error);
+        }
+			
+    }
+
+
+    async function addOxoNetwork(){
+        try {
+            await ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: '0x759' }], // Hexadecimal version of 1881, prefixed with 0x
+            });
+        } catch (error) {
+            if (error.code === 4902) {
+                try {
+                    await ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [{ 
+                            chainId: '0x759', // Hexadecimal version of 1881, prefixed with 0x
+                            chainName: "OXO Chain MainNet",
+                            nativeCurrency: {
+                                name: "OXO ",
+                                symbol: "OXO",
+                                decimals: 18,
+                            },
+                            rpcUrls: ["https://rpc.oxochain.com"],
+                            blockExplorerUrls: ["https://explorer.oxochain.com/"],
+                            iconUrls: [""],
+                    
+                        }],
+                    });
+                } catch (addError){
+                    console.log('Did not add network');
+                }
+            }
+        }
+    }
+
+
+    async function addOxoTestnetNetwork(){
+        try {
+            await ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: '0x166E9' }], // Hexadecimal version of 80001, prefixed with 0x
+            });
+        } catch (error) {
+            if (error.code === 4902) {
+                try {
+                    await ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [{ 
+                            chainId: '0x166E9', // Hexadecimal version of 80001, prefixed with 0x
+                            chainName: "OXO Chain TestNet",
+                            nativeCurrency: {
+                                name: "Test OXO",
+                                symbol: "TOXO",
+                                decimals: 18,
+                            },
+                            rpcUrls: ["https://rpc.testnet.oxochain.com"],
+                            blockExplorerUrls: ["https://explorer.testnet.oxochain.com/"],
+                            iconUrls: [""],
+                    
+                        }],
+                    });
+                } catch (addError){
+                    console.log('Did not add network');
+                }
+            }
+        }
+    }
+		
+
+		
+</script>
+	
+<script>   
+    $.getJSON("Contract.json", function(result) {            
+            abi = result.abi                
+        });
+
+       
+    $.getJSON("s.json", function(result) {            
+        cabi = result.abi                
+    });  
+
+    $( document ).ready(function() {
+        m = detectMetaMask()
+        if(m) {
+            $('#metaicon').removeClass('meta-gray')
+            $('#metaicon').addClass('meta-normal')
+            $('#enableMetamask').attr('disabled',false)
+            connect() // Make sure the connected wallet is being returned
+        } else {
+            $('#enableMetamask').attr('disabled',true)
+            $('#metaicon').removeClass('meta-normal')
+            $('#metaicon').addClass('meta-gray')
+        }
+
+        $('#tokenInfo').hide();
+
+        $('#enableMetamask').click(function() {
+            connect()
+        });
+
+        $('#getContractInfo').click(function() {
+            getContractInfo()
+        });
+        
+        $('#addToMetamask').click(function() {
+            addToMetamask()
+        });
+
+        $('#addMain').click(function() {
+            addOxoNetwork()
+        });
+        
+        $('#addTest').click(function() {
+            addOxoTestnetNetwork()
+        });
+
+        // try {     
+        //     //web3 = new Web3(new Web3.providers.HttpProvider("https://rpc.testnet.oxochain.com"));
+        //     getChainId();
+        //     getBlockNumber();
+        // } catch (error) {
+        //     alert(error)
+        // }  
+
+          
+    })
+</script>  
+</body>
+</html>
