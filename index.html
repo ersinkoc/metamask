@@ -104,7 +104,7 @@
         let currentAccount = null;
         let web3;
         let contractAddress;
-        let chainId;
+        let chainId = 0;
 
         let erc20ABI;
         let erc20Token;
@@ -153,10 +153,10 @@
 
         function handleChainChanged(chain) {
             console.log('handleChainChanged(' + chain + ')');
-            if (chainId != chain && chainId!='') {
-                chainId = chain;
+            if (chainId != chain) {
                 window.location.reload();
             }
+            chainId = chain;
         }
 
         function handleAccountsChanged(accounts) {
