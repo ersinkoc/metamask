@@ -53,6 +53,7 @@
                 <span id="status"></span>
             </div>
         </div>
+
         <section class="contract-section hidden">
             <div style="margin-top: 30px;" class="row text-center">
                 <div class="col-md-8">
@@ -151,11 +152,12 @@
 
         function handleDisconnect() {
             console.log('handleDisconnect()');
+            window.location.reload();
         }
 
         function handleChainChanged(chain) {
             console.log('handleChainChanged(' + chain + ')');
-            cId = parseInt(chain,16);
+            cId = parseInt(chain, 16);
 
             if (chainId !== cId) window.location.reload();
 
@@ -328,11 +330,10 @@
             }
         }
 
-        async function getStakeToken(){
-            if(stakeToken==null){
+        async function getStakeToken() {
+            if (stakeToken == null) {
                 try {
-                    var c = new web3.eth.Contract(stakeTokenABI, testContractAddress);
-                    stakeToken = c;
+                    stakeToken = new web3.eth.Contract(stakeTokenABI, testContractAddress);
                 } catch (error) {
                     console.log('Error: ' + error);
                 }
