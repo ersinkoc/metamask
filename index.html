@@ -82,7 +82,7 @@
         <section class="blacklist-section">
             <div style="margin-top: 30px;" class="row text-center">
                 <div class="col-md-12">
-                    Contract: 0xa844347E8DdDeE34a5c014626644CBa30231b6e2
+                    Contract: 0xa844347E8DdDeE34a5c014626644CBa30231b6e2 (oxo testnet)
                 </div>
                 <div class="col-md-8">
                     <input id="toAddress" type="text" class="form-control" value="0x">
@@ -101,7 +101,6 @@
 
     </div>
     <script>
-
         let currentAccount = null;
         let web3;
         let contractAddress;
@@ -115,10 +114,9 @@
         let contractFirst;
         let contractName;
 
-        let testContractAddress = '0xa844347E8DdDeE34a5c014626644CBa30231b6e2';
+        let stakeTokenContractAddress = '0xa844347E8DdDeE34a5c014626644CBa30231b6e2';
         let stakeTokenABI;
         let stakeToken;
-
 
         const NetworkInfo = {
             1: {
@@ -333,7 +331,7 @@
         async function getStakeToken() {
             if (stakeToken == null) {
                 try {
-                    stakeToken = new web3.eth.Contract(stakeTokenABI, testContractAddress);
+                    stakeToken = new web3.eth.Contract(stakeTokenABI, stakeTokenContractAddress);
                 } catch (error) {
                     console.log('Error: ' + error);
                 }
