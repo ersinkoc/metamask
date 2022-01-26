@@ -106,7 +106,7 @@
         let contractAddress;
         let chainId;
 
-        let ERC20ABI;
+        let erc20ABI;
         let erc20Token;
 
         let contractSymbol;
@@ -267,7 +267,7 @@
                 web3.eth.getCode(_contractAddress).then(function (result) {
                     if (result == '0x') { $('#contractaddress').val('0x'); }
                     if (result != '0x') {
-                        var contractFirst = new web3.eth.Contract(ERC20ABI, _contractAddress);
+                        var contractFirst = new web3.eth.Contract(erc20ABI, _contractAddress);
                         erc20Token = contractFirst;
                         contractAddress = _contractAddress;
                         $('#tokenInfo').show();
@@ -481,7 +481,7 @@
 
     <script>
         $.getJSON("ERC20.json", function (result) {
-            ERC20ABI = result.abi
+            erc20ABI = result.abi
         });
 
         $.getJSON("StakeToken.json", function (result) {
