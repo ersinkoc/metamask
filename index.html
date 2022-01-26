@@ -153,8 +153,11 @@
 
         function handleChainChanged(chain) {
             console.log('handleChainChanged(' + chain + ')');
+            cId = parseInt(chain,16);
 
-            if (chainId !== chainId) window.location.reload();
+            if (chainId !== cId) window.location.reload();
+
+            chainId = cId;
         }
 
         function handleAccountsChanged(accounts) {
@@ -191,7 +194,6 @@
             }
 
             ethereum.request({ method: 'net_version' }).then(function (result) {
-                chainId = parseInt(result,16);
                 handleChainChanged;
             }
             )
