@@ -153,11 +153,10 @@
 
         function handleChainChanged(chain) {
             console.log('handleChainChanged(' + chain + ')');
-            if (chainId != chain) {
+            if (chainId !== chain) {
                 chainId = chain;
                 window.location.reload();
             }
-            
         }
 
         function handleAccountsChanged(accounts) {
