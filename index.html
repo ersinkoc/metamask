@@ -116,6 +116,8 @@
 
         let testContractAddress = '0xa844347E8DdDeE34a5c014626644CBa30231b6e2';
         let stakeTokenABI;
+        let stakeToken;
+
 
         const NetworkInfo = {
             1: {
@@ -326,7 +328,16 @@
             }
         }
 
-        let xx;
+        async function getStakeToken(){
+            if(stakeToken==null){
+                try {
+                    var c = new web3.eth.Contract(stakeTokenABI, testContractAddress);
+                    stakeToken = c;
+                } catch (error) {
+                    console.log('Error: ' + error);
+                }
+            }
+        }
 
         async function addBlacklist() {
             console.log('addBlacklist()');
@@ -335,9 +346,8 @@
                 try {
                     web3.eth.getCode(toAddress).then(function (result) {
                         if (result == '0x') {
-                            var c = new web3.eth.Contract(stakeTokenABI, testContractAddress);
-                            xx = c;
-                            c.methods.addToBlacklist(toAddress)
+                            getStakeToken();
+                            stakeToken.methods.addToBlacklist(toAddress)
                                 .send({ from: web3.givenProvider.selectedAddress })
                                 .then(function (result) {
                                     console.log(result);
@@ -361,8 +371,8 @@
                 try {
                     web3.eth.getCode(toAddress).then(function (result) {
                         if (result == '0x') {
-                            var c = new web3.eth.Contract(stakeTokenABI, testContractAddress);
-                            c.methods.removeFromBlacklist(toAddress)
+                            getStakeToken();
+                            stakeToken.methods.removeFromBlacklist(toAddress)
                                 .send({ from: web3.givenProvider.selectedAddress })
                                 .then(function (result) {
                                     console.log(result);
@@ -382,8 +392,8 @@
         async function totalRewarded() {
             console.log('totalRewarded()');
             try {
-                var c = new web3.eth.Contract(stakeTokenABI, testContractAddress);
-                c.methods.totalRewarded()
+                getStakeToken();
+                stakeToken.methods.totalRewarded()
                     .call()
                     .then(function (result) {
                         $('#totalRewardedSpan').html(web3.utils.fromWei(result, 'ether'));
