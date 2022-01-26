@@ -156,7 +156,11 @@
             let cId = parseInt(chain);
             if (chainId !== cId) {
                 chainId = cId;
-                window.location.reload();
+                console.log(typeof(chain));
+                console.log(typeof(chainId));
+                console.log(typeof(cId));
+
+                //window.location.reload();
             }
         }
 
