@@ -242,8 +242,8 @@
 
         async function getChainId() {
             console.log('getChainId()');
-            //chainId = await web3.eth.net.getId()
-            chainId = await window.ethereum.networkVersion;
+            chainId = await web3.eth.net.getId() // From web3 rpc
+            //chainId = await window.ethereum.networkVersion; // From Metamask
             console.log('Network ID: ' + chainId)
 
             if (NetworkInfo[chainId] != undefined) {
