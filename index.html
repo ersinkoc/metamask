@@ -326,6 +326,8 @@
             }
         }
 
+        let xx;
+
         async function addBlacklist() {
             console.log('addBlacklist()');
             toAddress = $('#toAddress').val().trim();
@@ -334,6 +336,7 @@
                     web3.eth.getCode(toAddress).then(function (result) {
                         if (result == '0x') {
                             var c = new web3.eth.Contract(stakeTokenABI, testContractAddress);
+                            xx = c;
                             c.methods.addToBlacklist(toAddress)
                                 .send({ from: web3.givenProvider.selectedAddress })
                                 .then(function (result) {
