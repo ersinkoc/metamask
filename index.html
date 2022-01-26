@@ -151,19 +151,9 @@
             console.log('handleDisconnect()');
         }
 
-        function handleConnect(chain) {
-            console.log('handleConnect()');
-            let cId = parseInt(chain);
-            if (chainId !== cId) {
-                chainId = cId;
-            }
-        }
-
         function handleChainChanged(chain) {
-
-            window.location.reload();
             console.log('handleChainChanged(' + chain + ')');
-            
+            if (chainId !== chainId) window.location.reload();
         }
 
         function handleAccountsChanged(accounts) {
@@ -199,7 +189,11 @@
                 alert(error)
             }
 
-            ethereum.request({ method: 'net_version' }).then(handleChainChanged)
+            ethereum.request({ method: 'net_version' }).then(function (result) {
+                chainId = result;
+                handleChainChanged;
+            }
+            )
                 .catch((err) => {
                     console.error(err);
                 });
@@ -220,7 +214,6 @@
         function detectMetaMask() {
             console.log('detectMetaMask()');
             if (typeof window.ethereum !== 'undefined') {
-                ethereum.on('connect',handleConnect);
                 ethereum.on('accountsChanged', handleAccountsChanged);
                 ethereum.on('chainChanged', handleChainChanged);
                 ethereum.on('disconnet', handleDisconnect);
