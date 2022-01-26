@@ -468,15 +468,15 @@
             }
         }
 
-        async function addOxoNetwork() {
-            console.log('addOxoNetwork(1881)');
-            addNetworkToMetaMask(1881);
-        }
+        // async function addOxoNetwork() {
+        //     console.log('addOxoNetwork(1881)');
+        //     addNetworkToMetaMask(1881);
+        // }
 
-        async function addOxoTestnetNetwork() {
-            console.log('addOxoTestnetNetwork(91881)');
-            addNetworkToMetaMask(91881);
-        }
+        // async function addOxoTestnetNetwork() {
+        //     console.log('addOxoTestnetNetwork(91881)');
+        //     addNetworkToMetaMask(91881);
+        // }
     </script>
 
     <script>
@@ -516,11 +516,11 @@
             });
 
             $('#addMain').click(function () {
-                addOxoNetwork()
+                addNetworkToMetaMask(1881)
             });
 
             $('#addTest').click(function () {
-                addOxoTestnetNetwork()
+                addNetworkToMetaMask(91881)
             });
 
             $('#toBlacklist').click(function () {
