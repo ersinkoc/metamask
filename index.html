@@ -153,8 +153,9 @@
 
         function handleChainChanged(chain) {
             console.log('handleChainChanged(' + chain + ')');
-            if (chainId !== chain) {
-                chainId = chain;
+            let cId = parseInt(chain);
+            if (chainId !== cId) {
+                chainId = cId;
                 window.location.reload();
             }
         }
