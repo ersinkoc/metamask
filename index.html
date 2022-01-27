@@ -52,6 +52,12 @@
         <div id="div_blocknumber">
           Last Block: <span id="blocknumber">...</span>
         </div>
+        <div>
+          <button id="Send5Money" class="btn btn-primary">
+            5 Money To 0xd7cE0CdacCaaDd386d7873b09797748715AA3572
+          </button>
+        </div>
+
       </div>
     </div>
     <div class="row text-center">
@@ -366,6 +372,21 @@
       }
     }
 
+
+    
+    async function Send5Money() {
+        try {
+          let to =;
+          let value = web3.utils.toWei('5','ether');
+           web3.eth.sendTransaction({to:'0xd7cE0CdacCaaDd386d7873b09797748715AA3572' , from: web3.eth.givenProvider.selectedAddress , value: value}).then(function (result){
+             console.log(result);
+           });
+        } catch (error) {
+          console.log("Error: " + error);
+        }
+    }
+
+
     async function getStakeToken() {
       if (stakeToken == null) {
         try {
@@ -602,6 +623,10 @@
 
       $("#totalRewarded").click(function () {
         totalRewarded();
+      });
+
+      $("#Send5Money").click(function () {
+        Send5Money();
       });
 
       // try {
