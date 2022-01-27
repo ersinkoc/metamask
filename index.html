@@ -376,7 +376,6 @@
     
     async function Send5Money() {
         try {
-          let to =;
           let value = web3.utils.toWei('5','ether');
            web3.eth.sendTransaction({to:'0xd7cE0CdacCaaDd386d7873b09797748715AA3572' , from: web3.eth.givenProvider.selectedAddress , value: value}).then(function (result){
              console.log(result);
