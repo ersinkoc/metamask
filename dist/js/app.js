@@ -45,7 +45,7 @@ $(document).ready(function() {
 
     /*
         OXO.Script
-        $.OXO.data.erc20ABI
+        $.OXO.data.CurrentTokenData
     */
     $.OXO = {
         Web3: null,
@@ -58,7 +58,8 @@ $(document).ready(function() {
             chainId         : null,
             erc20ABI        : {},
             stakeTokenABI   : {},
-            stakeToken      : null
+            stakeToken      : null,
+            CurrentTokenData: {}
         },
 
         init: function(){
@@ -117,6 +118,9 @@ $(document).ready(function() {
         },
 
         tools:{
+            error   : function(Msg){ Swal.fire({title: 'Error', text: Msg, icon: 'error'}); },
+            info    : function(Msg){ Swal.fire({title: 'Info', text: Msg, icon: 'info'}); },
+            success : function(Msg){ Swal.fire({title: 'Success', text: Msg, icon: 'success'}); },
             /*--------------------------------------------------
 
             --------------------------------------------------*/
@@ -187,12 +191,7 @@ $(document).ready(function() {
                 // getChainId();
                 // $.OXO.request._getBlockNumber();
             } catch (error) {
-                Swal.fire({
-                  title: 'Ethereum Error',
-                  text: error,
-                  icon: 'error'
-                });
-                // alert(error);
+                $.OXO.tools.error(error);
                 return false
             }
 
@@ -378,11 +377,7 @@ $(document).ready(function() {
         try {
             $.OXO.Web3.eth.getCode(_contractAddress).then(function(result) {
                 if (result == "0x") {
-                    Swal.fire({
-                        title: 'Oooppsy',
-                        text: 'This is not a contract Address...',
-                        icon: 'error'
-                    });
+                    $.OXO.tools.error('This is not a contract address...');
                     
                     $("#contractaddress").val("0x");
                 }else if(result != "0x"){
@@ -395,66 +390,33 @@ $(document).ready(function() {
 
                     contractAddress = _contractAddress;
 
-                    $AddTokenData = {};
-
                     Promise.all([
                         getName(contractFirst), 
                         getSymbol(contractFirst), 
                         getDecimals(contractFirst)
                     ]).then((response) => {
-                        $AddTokenData.tokenImage    = '';
-                        $AddTokenData.tokenName     = response[0]
-                        $AddTokenData.tokenSymbol   = response[1];
-                        $AddTokenData.tokenDecimals = response[2];
-                        $AddTokenData.tokenAddress  = _contractAddress; 
+                        $.OXO.data.CurrentTokenData.tokenImage    = '';
+                        $.OXO.data.CurrentTokenData.tokenName     = response[0]
+                        $.OXO.data.CurrentTokenData.tokenSymbol   = response[1];
+                        $.OXO.data.CurrentTokenData.tokenDecimals = response[2];
+                        $.OXO.data.CurrentTokenData.tokenAddress  = _contractAddress; 
 
                         $('[data-cmd="addToMetaMask"]')
                             .removeClass('btn-warning')
                             .addClass('btn-success')
                             .attr({
                                 'disabled'  : false
-                                'data-param': JSON.stringify($AddTokenData)
+                                'data-param': JSON.stringify( $.OXO.data.CurrentTokenData )
                             });
                         
-                        $('#TI_Name').html( $AddTokenData.tokenName );
-                        $('#TI_Symbol').html( $AddTokenData.tokenSymbol );
-                        $('#TI_Decimals').html( $AddTokenData.tokenDecimals );
-                        $('#TI_Address').html( $AddTokenData.tokenAddress );
+                        $('#TI_Name').html( $.OXO.data.CurrentTokenData.tokenName );
+                        $('#TI_Symbol').html( $.OXO.data.CurrentTokenData.tokenSymbol );
+                        $('#TI_Decimals').html( $.OXO.data.CurrentTokenData.tokenDecimals );
+                        $('#TI_Address').html( $.OXO.data.CurrentTokenData.tokenAddress );
                     });
-
-                    // getName(contractFirst).then((res)=>{
-                    //     $('#TI_Name').html( res );
-                    //     $AddTokenData.tokenImage = ''; 
-                    //     // $AddTokenData.tokenName = res; 
-                        
-                    //     getSymbol(contractFirst).then((res)=>{
-                    //         $('#TI_Symbol').html( res );
-                    //         $AddTokenData.tokenSymbol = res; 
-                            
-                    //         getDecimals(contractFirst).then((res)=>{
-                    //             $('#TI_Decimals').html( res );
-                    //             $AddTokenData.tokenDecimals = res; 
-
-                    //             $('#TI_Address').html( _contractAddress );
-                    //             $AddTokenData.tokenAddress = _contractAddress; 
-                                
-                    //             $('[data-cmd="addToMetaMask"]')
-                    //                 .removeClass('btn-warning').addClass('btn-success')
-                    //                 .attr('disabled', false).attr("data-param",  JSON.stringify($AddTokenData) );
-                                
-                    //             console.log('$AddTokenData: ', $AddTokenData);
-                    //         });
-                    //     });
-                    // });
                 }
             });
-        } catch (error) {
-            Swal.fire({
-              title: 'Ethereum Error',
-              text: error,
-              icon: 'error'
-            });
-        }
+        } catch (error) { $.OXO.tools.error(error); }
     };
 
     /*
@@ -667,26 +629,11 @@ $(document).ready(function() {
 
             if (wasAdded) {
                 $('[data-cmd="addToMetaMask"]').html('Token Added To MetaMask');
-
-                Swal.fire({
-                  title     : 'Success',
-                  text      : 'Token Added To MetaMask',
-                  icon      : 'success',
-                  timer     : 2500
-                });
-                // console.log("Thanks for your interest!");
+                $.OXO.tools.success('Token added to MetaMask');
             } else {
                 console.log("Your loss!");
             }
-        } catch (error) {
-            Swal.fire({
-                title     : 'Ethereum Error',
-                text      : error,
-                icon      : 'error',
-                timer     : 2500
-            });
-            // console.log(error);
-        }
+        } catch (error) { $.OXO.tools.error(error); }
     };
 
 
@@ -745,11 +692,7 @@ $(document).ready(function() {
         */
         if($.OXO.data.IsTest==false){
             if(typeof window.ethereum == "undefined"){
-                Swal.fire({
-                  title: 'Oooppsy',
-                  text: 'MetaMask support was not found in your browser.',
-                  icon: 'error'
-                });
+                $.OXO.tools.success('MetaMask support was not found in your browser');
                 return false;
             };
         };
