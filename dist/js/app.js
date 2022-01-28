@@ -722,18 +722,18 @@ $(document).ready(function() {
                     }).html('Add Token to Metamask')
                     .removeClass('btn-success').addClass('btn-warning')
 
-                $('[data-cmd="addToMetaMask"]')
-                    .removeClass('btn-warning')
-                    .addClass('btn-success')
-                    .attr({
-                        'disabled'  : false,
-                        'data-param': JSON.stringify( response )
-                    });
-
                 $.OXO.request._getTokenInfo( $("#contractaddress").val().trim() )
                     .then(function(response){
                         $('#contractaddress').removeClass('loading');
-                        
+
+                        $('[data-cmd="addToMetaMask"]')
+                            .removeClass('btn-warning')
+                            .addClass('btn-success')
+                            .attr({
+                                'disabled'  : false,
+                                'data-param': JSON.stringify( response )
+                            });
+
                         $('#TI_Name').html( response.tokenName );
                         $('#TI_Symbol').html( response.tokenSymbol );
                         $('#TI_Decimals').html( response.tokenDecimals );
