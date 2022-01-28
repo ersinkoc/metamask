@@ -62,7 +62,7 @@ $(document).ready(function() {
 
         },
 
-        tools: {
+        tools:{
             /*--------------------------------------------------
 
             --------------------------------------------------*/
@@ -75,7 +75,7 @@ $(document).ready(function() {
                     return false;
                 };
 
-                if($.OXO.data.IsMetaMask !== true){
+                if($.OXO.data.IsMetaMask == true){
                     $Body.removeClass('not-connected').addClass('connected');
                     $('.ConnectStatus').html('Disconnect').attr("disabled", false).removeClass('bg-danger').addClass('bg-success')
 
@@ -84,6 +84,10 @@ $(document).ready(function() {
                     };
                 }else{
                     $('.ConnectStatus').html('Connect Wallet').attr("disabled", true).removeClass('bg-success').addClass('bg-danger');
+                }
+
+                if(($("#WalletConnectionModal").data('bs.modal') || {})._isShown){
+                    $("#WalletConnectionModal").modal('hide');
                 }
             },
             /*--------------------------------------------------
