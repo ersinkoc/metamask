@@ -95,7 +95,9 @@ $(document).ready(function() {
         NetworkInfo();
     };
     function NetworkInfo(){
-        if (NetworkInfo[chainId] != undefined) {
+        console.log('chainId: ', chainId);
+
+        if (NetworkInfo[chainId] !== 'undefined') {
             let $ChainData = NetworkInfo[chainId];
 
             $('#ChainName').html( $ChainData.chainName );
