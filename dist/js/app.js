@@ -724,8 +724,15 @@ $(document).ready(function() {
 
                 $.OXO.request._getTokenInfo( $("#contractaddress").val().trim() )
                     .then(function(response){
-                        console.log('_getTokenInfo response: ', response);
+                        console.log('_getTokenInfo response: ');
+                        console.log(response);
+
                         $('#contractaddress').removeClass('loading');
+
+                        $('#TI_Name').html( response.tokenName );
+                        $('#TI_Symbol').html( response.tokenSymbol );
+                        $('#TI_Decimals').html( response.tokenDecimals );
+                        $('#TI_Address').html( response.tokenAddress );
 
                         $('[data-cmd="addToMetaMask"]')
                             .removeClass('btn-warning')
@@ -734,12 +741,6 @@ $(document).ready(function() {
                                 'disabled'  : false,
                                 'data-param': JSON.stringify( response )
                             });
-
-                        $('#TI_Name').html( response.tokenName );
-                        $('#TI_Symbol').html( response.tokenSymbol );
-                        $('#TI_Decimals').html( response.tokenDecimals );
-                        $('#TI_Address').html( response.tokenAddress );
-
                     }).catch(function(err){
                         $('#contractaddress').removeClass('loading');
                         $("#contractaddress").val("0x");
