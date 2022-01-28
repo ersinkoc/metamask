@@ -10,7 +10,7 @@ $(document).ready(function() {
     }
 
     let $Body = $('body');
-    let currentAccount=null, web3, m, contractAddress, chainId;
+    let currentAccount=null, web3, m, contractAddress, chainId, web3;
     let erc20ABI, erc20Token;
     let contractSymbol,contractDecimals,contractFirst,contractName;
     let stakeTokenContractAddress ="0xa844347E8DdDeE34a5c014626644CBa30231b6e2";
@@ -566,7 +566,7 @@ $(document).ready(function() {
 
         if(m){
             $Body.removeClass('not-connected').addClass('connected');
-            $('.ConnectStatus').html('Disconnec').attr("disabled", false).removeClass('bg-danger').addClass('bg-success')
+            $('.ConnectStatus').html('Disconnect').attr("disabled", false).removeClass('bg-danger').addClass('bg-success')
         }else{
             $('.ConnectStatus').html('Connect Wallet').attr("disabled", true).removeClass('bg-success').addClass('bg-danger');
         }
@@ -585,7 +585,7 @@ $(document).ready(function() {
             Check MetaMask
         */
         if($TestLocal==false){
-            if(!window.ethereum){
+            if(typeof window.ethereum == "undefined"){
                 Swal.fire({
                   title: 'Oooppsy',
                   text: 'MetaMask support was not found in your browser.',
