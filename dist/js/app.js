@@ -168,7 +168,7 @@ $(document).ready(function() {
             /*--------------------------------------------------
 
             --------------------------------------------------*/
-            toggleConnection: await function(){
+            toggleConnection: async function(){
                 console.log("OXO.tools.toggleConnection()");
                 
                 if($.OXO.data.IsTest == true){
@@ -191,6 +191,7 @@ $(document).ready(function() {
                 if(($("#WalletConnectionModal").data('bs.modal') || {})._isShown){
                     $("#WalletConnectionModal").modal('hide');
                 }
+                return true;
             },
             /*--------------------------------------------------
 
