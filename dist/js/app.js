@@ -2,7 +2,7 @@
     READY
 ********************************************************/
 $(document).ready(function() {
-    console.log('jQuery: Window Ready');
+    console.log('jQuery: Window Ready!');
 
     let $TestLocal = false;
     if(location.origin==='file://'){
