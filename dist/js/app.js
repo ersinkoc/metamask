@@ -133,30 +133,31 @@ $(document).ready(function() {
             //getBlockNumber();
         } catch (error) {
             alert(error);
+            return false
         }
 
-        ethereum
-            .request({ method: "net_version" })
-            .then(function(result) {
-                handleChainChanged;
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+        ethereum.request({ method: "net_version" }).then(function(result) {
+            handleChainChanged;
+        })
+        .catch((err) => {
+            console.error(err);
+            return false
+        });
 
-        ethereum
-            .request({ method: "eth_requestAccounts" })
-            .then(handleAccountsChanged)
-            .catch((err) => {
-                if (err.code === 4001) {
-                    // EIP-1193 userRejectedRequest error
-                    // If this happens, the user rejected the connection request.
-                    console.log("Please connect to MetaMask.");
-                    $("#status").html("You refused to connect Metamask");
-                } else {
-                    console.error(err);
-                }
-            });
+        ethereum.request({ method: "eth_requestAccounts" }).then(handleAccountsChanged)
+        .catch((err) => {
+            if (err.code === 4001) {
+                // EIP-1193 userRejectedRequest error
+                // If this happens, the user rejected the connection request.
+                console.log("Please connect to MetaMask.");
+                $("#status").html("You refused to connect Metamask");
+            } else {
+                console.error(err);
+                return false
+            }
+        });
+
+        toggleConnection()
     };
 
     /*
@@ -567,6 +568,10 @@ $(document).ready(function() {
         if(m){
             $Body.removeClass('not-connected').addClass('connected');
             $('.ConnectStatus').html('Disconnect').attr("disabled", false).removeClass('bg-danger').addClass('bg-success')
+
+            if(typeof web3 == "undefined"){
+                connect();
+            };
         }else{
             $('.ConnectStatus').html('Connect Wallet').attr("disabled", true).removeClass('bg-success').addClass('bg-danger');
         }
