@@ -113,7 +113,7 @@ $(document).ready(function() {
                     $Body.removeClass('not-connected').addClass('connected');
                     $('.ConnectStatus').html('Disconnect').attr("disabled", false).removeClass('bg-danger').addClass('bg-success')
 
-                    if(typeof $.OXO.data.web3 == "undefined"){
+                    if($.OXO.data.web3 == null){
                         $.OXO.connect();
                     };
                 }else{
@@ -202,7 +202,7 @@ $(document).ready(function() {
         }
     };
     $.OXO.init();
-    
+
     $.OXO.tools.IsMetaMask().then(function(result) {
         console.log('IsMetaMask:', result);
 
