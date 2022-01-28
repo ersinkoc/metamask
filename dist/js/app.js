@@ -4,7 +4,9 @@
     READY
 ********************************************************/
 $(document).ready(function() {
+    console.log('jQuery: Window Ready');
 
+    let $Body = $('body');
     let currentAccount = null;
     let web3;
     let contractAddress;
@@ -524,13 +526,7 @@ $(document).ready(function() {
     //     console.log('addOxoTestnetNetwork(91881)');
     //     addNetworkToMetaMask(91881);
     // };
-});
 
-/********************************************************
-    WINDOW LOAD
-********************************************************/
-$(window).on('load', function() {
-    $Body = $('body');
     m = detectMetaMask();
     if (m) {
         $Body.removeClass('not-connected').addClass('connected');
@@ -589,5 +585,12 @@ $(window).on('load', function() {
     $('[data-toggle="offcanvas"]').on('click', function () {
         $('.offcanvas-collapse').toggleClass('open')
     });
+});
+
+/********************************************************
+    WINDOW LOAD
+********************************************************/
+$(window).on('load', function() {
+    console.log('jQuery: Window Loaded');
 
 });
