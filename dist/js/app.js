@@ -670,15 +670,13 @@ $(document).ready(function() {
                                 iconUrls: [NetworkInfo[_chainId].iconUrls],
                             }, ],
                         });
-                    } catch (addError) {
-                        console.log("Did not add network");
-                    }
+                    } catch (addError) { $.OXO.tools.error('Did not add network'); }
                 }
             }
+        }else{
+            console.log('NetworkInfo[_chainId]=undefined');
         }
     };
-
-    // $("#tokenInfo").hide();
 
     /*
         Command Palette
