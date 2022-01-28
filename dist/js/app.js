@@ -2,10 +2,8 @@ window.app = {}
 
 let $Body = $('body');
 let currentAccount=null, contractAddress, chainId;
-let erc20ABI, symbol="MONEY";
+let symbol="MONEY";
 let contractSymbol,contractDecimals,contractFirst,contractName;
-let stakeTokenContractAddress ="0xa844347E8DdDeE34a5c014626644CBa30231b6e2";
-let stakeTokenABI,stakeToken;
 
 const NetworkInfo = {
     1: {
@@ -47,7 +45,7 @@ $(document).ready(function() {
 
     /*
         OXO.Script
-        $.OXO.data.web3
+        $.OXO.data.erc20ABI
     */
     $.OXO = {
         data:{
@@ -56,8 +54,44 @@ $(document).ready(function() {
             currentAccount  : null, 
             IsMetaMask      : null,
             contractAddress : null,
-            chainId         : null
+            chainId         : null,
+            erc20ABI        : {},
+            stakeTokenABI   : {},
+            stakeToken      : null
         },
+
+        init: function(){
+            if($.OXO.data.IsTest==false){
+                $.getJSON("ERC20.json", function (result) {
+                    $.OXO.data.erc20ABI = result.abi;
+                });
+                $.getJSON("StakeToken.json", function (result) {
+                    $.OXO.data.stakeTokenABI = result.abi;
+                });
+            }
+        },
+
+        stake: {
+            ContractAddress: "0xa844347E8DdDeE34a5c014626644CBa30231b6e2",
+            _getStakeToken: function(){
+                return new Promise(function (resolve, reject) {
+                    if ($.OXO.data.stakeToken == null) {
+                        try {
+                            $.OXO.data.stakeToken = new $.OXO.data.web3.eth.Contract(
+                                $.OXO.data.stakeTokenABI,
+                                $.OXO.stake.ContractAddress
+                            );
+
+                            resolve( $.OXO.data.stakeToken )
+                        } catch (error) {
+                            console.log("_getStakeToken=>error: " + error);
+                            reject(error)
+                        }
+                    }
+                });
+            }
+        },
+
         handlers:{
 
         },
@@ -167,6 +201,13 @@ $(document).ready(function() {
             // $.OXO.Tools.toggleConnection();
         }
     };
+    $.OXO.init();
+    
+    $.OXO.tools.IsMetaMask().then(function(result) {
+        console.log('IsMetaMask:', result);
+
+        $.OXO.tools.toggleConnection();
+    });
 
 
 
@@ -193,30 +234,6 @@ $(document).ready(function() {
 
 
 
-
-    /*
-        Fetch JSON File
-    */
-    if($.OXO.data.IsTest==false){
-        $.getJSON("ERC20.json", function (result) {
-          erc20ABI = result.abi;
-        });
-        $.getJSON("StakeToken.json", function (result) {
-          stakeTokenABI = result.abi;
-        });
-    }
-    // if($.OXO.data.IsTest==false){
-    //     $.when($.getJSON('/ERC20.json'), $.getJSON('/StakeToken.json')).done(function(file1Result,file2Result){
-    //         erc20ABI        = file1Result[0];
-    //         console.log('ERC20.json Loaded!');
-
-    //         stakeTokenABI   = file2Result[0];
-    //         console.log('StakeToken.json Loaded!');
-    //     });
-
-    //     console.log('erc20ABI', erc20ABI)
-    //     console.log('StakeToken', stakeTokenABI)
-    // }
 
     /*
         handle Disconnect
@@ -433,7 +450,7 @@ $(document).ready(function() {
                     $('#contractaddress').removeClass('loading');
 
                     let contractFirst = new $.OXO.data.web3.eth.Contract(
-                        erc20ABI,
+                        $.OXO.data.erc20ABI,
                         _contractAddress
                     );
 
@@ -556,18 +573,18 @@ $(document).ready(function() {
     /*
         
     */
-    async function getStakeToken() {
-        if (stakeToken == null) {
-            try {
-                stakeToken = new $.OXO.data.web3.eth.Contract(
-                    stakeTokenABI,
-                    stakeTokenContractAddress
-                );
-            } catch (error) {
-                console.log("Error: " + error);
-            }
-        }
-    };
+    // async function getStakeToken() {
+    //     if ($.OXO.data.stakeToken == null) {
+    //         try {
+    //             $.OXO.data.stakeToken = new $.OXO.data.web3.eth.Contract(
+    //                 $.OXO.data.stakeTokenABI,
+    //                 $.OXO.stake.ContractAddress
+    //             );
+    //         } catch (error) {
+    //             console.log("Error: " + error);
+    //         }
+    //     }
+    // };
 
     /*
         
@@ -579,14 +596,16 @@ $(document).ready(function() {
             try {
                 $.OXO.data.web3.eth.getCode(toAddress).then(function(result) {
                     if (result == "0x") {
-                        getStakeToken();
-                        stakeToken.methods
-                            .addToBlacklist(toAddress)
-                            .send({ 
-                                from: $.OXO.data.web3.givenProvider.selectedAddress 
-                            }).then(function(result) {
-                                console.log(result);
-                            });
+                        $.OXO.stake._getStakeToken().then(function(){
+                            
+                            $.OXO.data.stakeToken.methods
+                                .addToBlacklist(toAddress)
+                                .send({ 
+                                    from: $.OXO.data.web3.givenProvider.selectedAddress 
+                                }).then(function(result) {
+                                    console.log('addBlacklist: ', result);
+                                });
+                        });
                     } else {
                         console.log("Address is a contract");
                         $("#toAddress").val("0xdead000123");
@@ -610,7 +629,7 @@ $(document).ready(function() {
                 $.OXO.data.web3.eth.getCode(toAddress).then(function(result) {
                     if (result == "0x") {
                         getStakeToken();
-                        stakeToken.methods
+                        $.OXO.data.stakeToken.methods
                             .removeFromBlacklist(toAddress)
                             .send({ 
                                 from: $.OXO.data.web3.givenProvider.selectedAddress 
@@ -636,7 +655,8 @@ $(document).ready(function() {
         console.log("totalRewarded()");
         try {
             getStakeToken();
-            stakeToken.methods
+            
+            $.OXO.data.stakeToken.methods
                 .totalRewarded()
                 .call()
                 .then(function(result) {
@@ -780,10 +800,6 @@ $(document).ready(function() {
     // };
 
     // m = detectMetaMask();
-    $.OXO.tools.IsMetaMask().then(function(result) {
-        console.log('IsMetaMask:', result);
-    });
-    $.OXO.tools.toggleConnection();
     
     // function toggleConnection(){
     //     if($.OXO.data.IsTest==true){
