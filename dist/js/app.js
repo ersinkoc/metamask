@@ -250,23 +250,24 @@ $(document).ready(function() {
 
                     contractAddress = _contractAddress;
 
-                    let TI_Name     = getName(contractFirst);
-                    let TI_Symbol   = getSymbol(contractFirst);
-                    let TI_Decimals = getDecimals(contractFirst);
-                    let TI_Address  = _contractAddress;
+                    $AddTokenData = {};
+                    getName(contractFirst).then((res)=>{
+                        $('#TI_Name').html( res );
+                        // $AddTokenData.tokenAddress = res; 
+                    });
+                    getSymbol(contractFirst).then((res)=>{
+                        $('#TI_Symbol').html( res );
+                        $AddTokenData.tokenSymbol = res; 
+                    });
+                    getDecimals(contractFirst).then((res)=>{
+                        $('#TI_Decimals').html( res );
+                        $AddTokenData.tokenDecimals = res; 
+                    });
 
-                    $('#TI_Name').html( TI_Name );
-                    $('#TI_Symbol').html( TI_Symbol );
-                    $('#TI_Decimals').html( TI_Decimals );
                     $('#TI_Address').html( _contractAddress );
+                    $AddTokenData.tokenAddress = _contractAddress; 
 
-                    let $AddTokenData = {
-                        "tokenAddress"  : _contractAddress, 
-                        "tokenSymbol"   : TI_Symbol, 
-                        "tokenDecimals" : TI_Decimals, 
-                        "tokenImage"    : ""
-                    };
-
+                    console.log('$AddTokenData: ', $AddTokenData);
                     $('[data-cms="addToMetaMask"]').attr('disabled', false).attr("data-param",  JSON.stringify($AddTokenData) );
                 }
             });
@@ -282,56 +283,61 @@ $(document).ready(function() {
     /*
         
     */
-    async function getSymbol(tokenData) {
+    function getSymbol(tokenData) {
         console.log("getSymbol();");
-        try {
-            tokenData.methods
-                .symbol()
-                .call()
-                .then(function(result) {
-                    contractSymbol = result;
-                    return contractSymbol
-                });
-        } catch (error) {
-            console.log("Error: " + error);
-        }
+        return new Promise(function (resolve, reject) {
+            try {
+                tokenData.methods.symbol().call()
+                    .then(function(result) {
+                        contractSymbol = result;
+                        resolve(contractSymbol);
+                    });
+            } catch (error) {
+                console.log("Error: " + error);
+                reject(error);
+            }
+        });
     };
 
     /*
         
     */
-    async function getDecimals(tokenData) {
+    function getDecimals(tokenData) {
         console.log("getDecimals();");
-        try {
-            tokenData.methods
-                .decimals()
-                .call()
-                .then(function(result) {
-                    contractDecimals = result;
-                    return contractDecimals;
-                });
-        } catch (error) {
-            console.log("Error: " + error);
-        }
+        return new Promise(function (resolve, reject) {
+            try {
+                tokenData.methods.decimals().call()
+                    .then(function(result) {
+                        contractDecimals = result;
+                        resolve(contractDecimals);
+                    });
+            } catch (error) {
+                console.log("Error: " + error);
+                reject(error);
+            }
+        });
     };
 
     /*
         
     */
-    async function getName(tokenData) {
+    function getName(tokenData) {
         console.log("getName();");
-        try {
-            tokenData.methods
-                .name()
-                .call()
-                .then(function(result) {
-                    $("#btnToken").html('Add  "' + result + '" to Metamask');
-                    contractName = result;
-                    return contractName;
-                });
-        } catch (error) {
-            console.log("Error: " + error);
-        }
+        return new Promise(function (resolve, reject) {
+            try {
+                tokenData.methods
+                    .name()
+                    .call()
+                    .then(function(result) {
+                        $("#btnToken").html('Add  "' + result + '" to Metamask');
+                        contractName = result;
+                        resolve(contractName);
+                    });
+            } catch (error) {
+                console.log("Error: " + error);
+                reject(error);
+            }
+        });
     };
 
     /*
