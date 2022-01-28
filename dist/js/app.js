@@ -92,7 +92,9 @@ $(document).ready(function() {
         };
 
         chainId = cId;
-
+        NetworkInfo();
+    };
+    function NetworkInfo(){
         if (NetworkInfo[chainId] != undefined) {
             let $ChainData = NetworkInfo[chainId];
 
@@ -108,7 +110,7 @@ $(document).ready(function() {
             }).join("<br>");
             $('#Explorer').html(ExplorerURLs);
         }
-    };
+    }
 
     /*
         
@@ -181,7 +183,8 @@ $(document).ready(function() {
             }
         });
 
-        toggleConnection()
+        toggleConnection();
+        NetworkInfo();
     };
 
     /*
