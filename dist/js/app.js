@@ -405,7 +405,7 @@ $(document).ready(function() {
                             .removeClass('btn-warning')
                             .addClass('btn-success')
                             .attr({
-                                'disabled'  : false
+                                'disabled'  : false,
                                 'data-param': JSON.stringify( $.OXO.data.CurrentTokenData )
                             });
                         
