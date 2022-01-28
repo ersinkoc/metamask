@@ -1,3 +1,42 @@
+let $Body = $('body');
+let currentAccount=null, web3, m, contractAddress, chainId;
+let erc20ABI, erc20Token;
+let contractSymbol,contractDecimals,contractFirst,contractName;
+let stakeTokenContractAddress ="0xa844347E8DdDeE34a5c014626644CBa30231b6e2";
+let stakeTokenABI,stakeToken;
+
+const NetworkInfo = {
+    1: {
+        chainName: "Ethereum Main Net",
+        chainId: 0x1,
+        name: "Ether",
+        symbol: "ETH",
+        decimals: 18,
+        rpcUrls: {
+            0: "https://mainnet.infura.io/v3/b38821aa1dfb47fe8bf1adad521e1afc",
+        },
+        blockExplorerUrls: { 0: "https://etherscan.io" },
+    },
+    1881: {
+        chainName: "OXO Chain Main",
+        chainId: 0x759,
+        name: "OXO",
+        symbol: "OXO",
+        decimals: 18,
+        rpcUrls: { 0: "https://rpc.oxochain.com" },
+        blockExplorerUrls: { 0: "https://explorer.oxochain.com" },
+    },
+    91881: {
+        chainName: "OXO Chain Test",
+        chainId: 0x166e9,
+        name: "Test OXO",
+        symbol: "TOXO",
+        decimals: 18,
+        rpcUrls: { 0: "https://rpc.testnet.oxochain.com" },
+        blockExplorerUrls: { 0: "https://explorer.testnet.oxochain.com" },
+    },
+};
+
 /********************************************************
     READY
 ********************************************************/
@@ -7,46 +46,8 @@ $(document).ready(function() {
     let $TestLocal = false;
     if(location.origin==='file://'){
         $TestLocal = true;
-    }
-
-    let $Body = $('body');
-    let currentAccount=null, web3, m, contractAddress, chainId;
-    let erc20ABI, erc20Token;
-    let contractSymbol,contractDecimals,contractFirst,contractName;
-    let stakeTokenContractAddress ="0xa844347E8DdDeE34a5c014626644CBa30231b6e2";
-    let stakeTokenABI,stakeToken;
-
-    const NetworkInfo = {
-        1: {
-            chainName: "Ethereum Main Net",
-            chainId: 0x1,
-            name: "Ether",
-            symbol: "ETH",
-            decimals: 18,
-            rpcUrls: {
-                0: "https://mainnet.infura.io/v3/b38821aa1dfb47fe8bf1adad521e1afc",
-            },
-            blockExplorerUrls: { 0: "https://etherscan.io" },
-        },
-        1881: {
-            chainName: "OXO Chain Main",
-            chainId: 0x759,
-            name: "OXO",
-            symbol: "OXO",
-            decimals: 18,
-            rpcUrls: { 0: "https://rpc.oxochain.com" },
-            blockExplorerUrls: { 0: "https://explorer.oxochain.com" },
-        },
-        91881: {
-            chainName: "OXO Chain Test",
-            chainId: 0x166e9,
-            name: "Test OXO",
-            symbol: "TOXO",
-            decimals: 18,
-            rpcUrls: { 0: "https://rpc.testnet.oxochain.com" },
-            blockExplorerUrls: { 0: "https://explorer.testnet.oxochain.com" },
-        },
     };
+    console.log('Test Local: ', $TestLocal );
 
     /*
         Fetch JSON File
@@ -59,9 +60,11 @@ $(document).ready(function() {
     // });
     if($TestLocal==false){
         $.when($.getJSON('/ERC20.json'), $.getJSON('/StakeToken.json')).done(function(file1Result,file2Result){
-            console.log('JSON Files Loaded!');
             erc20ABI        = file1Result[0];
+            console.log('ERC20.json Loaded!');
+
             stakeTokenABI   = file2Result[0];
+            console.log('StakeToken.json Loaded!');
         });
     }
 
