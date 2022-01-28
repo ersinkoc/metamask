@@ -63,11 +63,11 @@ $(document).ready(function() {
     // $.getJSON("StakeToken.json", function (result) {
     //   stakeTokenABI = result.abi;
     // });
-    // $.when($.getJSON('/ERC20.json'), $.getJSON('/StakeToken.json')).done(function(file1Result,file2Result){
-    //     console.log('JSON Files Loaded!');
-    //     erc20ABI        = file1Result[0];
-    //     stakeTokenABI   = file2Result[0];
-    // });
+    $.when($.getJSON('/ERC20.json'), $.getJSON('/StakeToken.json')).done(function(file1Result,file2Result){
+        console.log('JSON Files Loaded!');
+        erc20ABI        = file1Result[0];
+        stakeTokenABI   = file2Result[0];
+    });
 
     /*
         handle Disconnect
@@ -530,6 +530,62 @@ $(document).ready(function() {
     WINDOW LOAD
 ********************************************************/
 $(window).on('load', function() {
+    $Body = $('body');
+    m = detectMetaMask();
+    if (m) {
+        $Body.removeClass('not-connected').addClass('connected');
+        $("#enableMetamask").attr("disabled", false).removeClass('bg-danger').addClass('bg-success');
+        connect(); // Make sure the connected wallet is being returned
+    } else {
+        $("#enableMetamask").attr("disabled", true).removeClass('bg-success').addClass('bg-danger');
+    }
+
+    $("#tokenInfo").hide();
+
+    $("#enableMetamask").click(function() {
+        connect();
+    });
+
+    $("#getTokenInfo").click(function() {
+        getTokenInfo();
+    });
+
+    $("#addToMetamask").click(function() {
+        addToMetamask();
+    });
+
+    $("#addMain").click(function() {
+        addNetworkToMetaMask(1881);
+    });
+
+    $("#addTest").click(function() {
+        addNetworkToMetaMask(91881);
+    });
+
+    $("#toBlacklist").click(function() {
+        addBlacklist();
+    });
+
+    $("#removeBlacklist").click(function() {
+        removeBlacklist();
+    });
+
+    $("#totalRewarded").click(function() {
+        totalRewarded();
+    });
+
+    $("#Send5Money").click(function() {
+        Send5Money();
+    });
+
+    // try {
+    //     //web3 = new Web3(new Web3.providers.HttpProvider("https://rpc.testnet.oxochain.com"));
+    //     getChainId();
+    //     getBlockNumber();
+    // } catch (error) {
+    //     alert(error)
+    // }
+
     $('[data-toggle="offcanvas"]').on('click', function () {
         $('.offcanvas-collapse').toggleClass('open')
     });
