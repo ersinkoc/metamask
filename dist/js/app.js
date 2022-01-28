@@ -92,9 +92,9 @@ $(document).ready(function() {
         };
 
         chainId = cId;
-        NetworkInfo();
+        SetNetworkInfo();
     };
-    function NetworkInfo(){
+    function SetNetworkInfo(){
         console.log('chainId: ', chainId);
 
         if (NetworkInfo[chainId] !== 'undefined') {
@@ -186,7 +186,7 @@ $(document).ready(function() {
         });
 
         toggleConnection();
-        NetworkInfo();
+        SetNetworkInfo();
     };
 
     /*
