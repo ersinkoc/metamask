@@ -525,9 +525,52 @@ $(document).ready(function() {
 
     $("#tokenInfo").hide();
 
-    $("#enableMetamask").click(function() {
-        connect();
+    /*
+        Command Palette
+    */
+    $Body.on('click', '[data-cmd]', function(event) {
+        event.preventDefault();
+
+        if(!window.ethereum){
+            Swal.fire({
+              title: 'Oooppsy',
+              text: 'MetaMask support was not found in your browser.',
+              icon: 'error'
+            });
+            return false;
+        };
+
+        let $Command    = $(this).data('cmd');
+        let $Data       = $(this).data('param') ? JSON.parse($(this).data('param')) : {};
+
+        switch($Command) {
+            case 'ConnectMetaMask':
+                connect();
+                break;
+            case 'getTokenInfo':
+                getTokenInfo();
+                break;
+            case 'addToMetaMask':
+                addToMetamask();
+                break;
+            case 'addNetwork':
+                let $NetworkPort 
+                addNetworkToMetaMask( $Data.Port ); // addNetworkToMetaMask(1881);
+                break;
+            case 'addToBlackList':
+                addBlacklist();
+                break;
+            case 'RemoveFromBlackList':
+                removeBlacklist();
+                break;
+            default:
+        }
+        event.preventDefault();
+        /* Act on the event */
     });
+    // $("#ConnectMetaMask").click(function() {
+    //     connect();
+    // });
 
     $("#getTokenInfo").click(function() {
         getTokenInfo();
