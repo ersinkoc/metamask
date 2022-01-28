@@ -112,6 +112,9 @@ $(document).ready(function() {
                 return '<a href="'+ NetworkInfo[chainId].rpcUrls[k] +'" target="_blank" class="btn btn-sm btn-primary">'+ NetworkInfo[chainId].rpcUrls[k]  +'</a>'
             }).join("<br>");
             $('#Explorer').html(ExplorerURLs);
+
+            $('a[data-cms="ChangeNetwork"]').removeClass('btn-success');
+            $('a[data-cms="ChangeNetwork"][data-id="'+ chainId +'"]').addClass('btn-success');
         }
     }
 
@@ -133,7 +136,12 @@ $(document).ready(function() {
             if (currentAccount != null) {
                 // Set the button label
                 $("#enableMetamask").html(currentAccount);
-                getBalance(currentAccount);
+                
+                getBalance(currentAccount).then(function(result) {
+
+                    $('#wallet_balance').html( ConvertWei(result) );
+                });
+                
                 getChainId();
                 getBlockNumber();
             }
@@ -492,23 +500,31 @@ $(document).ready(function() {
     /*
         
     */
-    async function getBalance() {
+    function getBalance() {
         console.log("getBalance()");
         var getBalanceResult = 0;
-        try {
-            web3.eth.getBalance(currentAccount).then(function(result) {
-                var symbol = "MONEY";
-                if (NetworkInfo[chainId] != undefined)
-                    symbol = NetworkInfo[chainId].symbol;
-                $("#balance").html(
-                    web3.utils.fromWei(result, "ether") + " " + symbol
-                );
-            });
-        } catch (error) {
-            console.log("Error: " + error);
-        }
-        return getBalanceResult;
+        
+        return new Promise(function (resolve, reject) {
+            try {
+                web3.eth.getBalance(currentAccount).then(function(result) {
+                    var symbol = "MONEY";
+                    if (NetworkInfo[chainId] != undefined){
+                        symbol = NetworkInfo[chainId].symbol
+                    };
+                    // resolve(web3.utils.fromWei(result, "ether") + " " + symbol)
+                    resolve(result)
+                    // $("#balance").html();
+                });
+            } catch (error) {
+                console.log("Error: " + error);
+                reject(error);
+            }
+        });
+        // return getBalanceResult;
     };
+    function ConvertWei(Val){
+        return web3.utils.fromWei(Val, "ether") + " " + symbol
+    }
 
     /*
         
@@ -559,8 +575,8 @@ $(document).ready(function() {
     /*
         
     */
-    async function addNetworkToMetaMask(_chainId) {
-        console.log("addNetworkToMetaMask(Arguments)");
+    async function ChangeNetwork(_chainId) {
+        console.log("ChangeNetwork(Arguments)");
         console.log(arguments);
         if (NetworkInfo[_chainId] != undefined) {
             var HexChainId = web3.utils.toHex(_chainId); //
@@ -603,7 +619,7 @@ $(document).ready(function() {
     */
     // async function addOxoNetwork() {
     //     console.log('addOxoNetwork(1881)');
-    //     addNetworkToMetaMask(1881);
+    //     ChangeNetwork(1881);
     // };
 
     /*
@@ -611,7 +627,7 @@ $(document).ready(function() {
     */
     // async function addOxoTestnetNetwork() {
     //     console.log('addOxoTestnetNetwork(91881)');
-    //     addNetworkToMetaMask(91881);
+    //     ChangeNetwork(91881);
     // };
 
     m = detectMetaMask();
@@ -675,9 +691,9 @@ $(document).ready(function() {
             case 'addToMetaMask':
                 addToMetamask( $Data );
                 break;
-            case 'addNetwork':
+            case 'ChangeNetwork':
                 let $NetworkPort 
-                addNetworkToMetaMask( $Data.Port ); // addNetworkToMetaMask(1881);
+                ChangeNetwork( $Data.Port ); // ChangeNetwork(1881);
                 break;
             case 'addToBlackList':
                 addBlacklist();
@@ -706,11 +722,11 @@ $(document).ready(function() {
     // });
 
     $("#addMain").click(function() {
-        addNetworkToMetaMask(1881);
+        ChangeNetwork(1881);
     });
 
     $("#addTest").click(function() {
-        addNetworkToMetaMask(91881);
+        ChangeNetwork(91881);
     });
 
     $("#toBlacklist").click(function() {
