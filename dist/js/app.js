@@ -230,7 +230,8 @@ $(document).ready(function() {
         $('[data-cms="addToMetaMask"]').attr({
             'disabled'      : true,
             'data-param'    : '{}'
-        });
+        })
+        .removeClass('btn-success').addClass('btn-warning')
 
         try {
             web3.eth.getCode(_contractAddress).then(function(result) {
@@ -253,10 +254,13 @@ $(document).ready(function() {
                     $AddTokenData = {};
                     getName(contractFirst).then((res)=>{
                         $('#TI_Name').html( res );
-                        // $AddTokenData.tokenAddress = res; 
+                        $AddTokenData.tokenImage = ''; 
+                        // $AddTokenData.tokenName = res; 
+                        
                         getSymbol(contractFirst).then((res)=>{
                             $('#TI_Symbol').html( res );
                             $AddTokenData.tokenSymbol = res; 
+                            
                             getDecimals(contractFirst).then((res)=>{
                                 $('#TI_Decimals').html( res );
                                 $AddTokenData.tokenDecimals = res; 
@@ -264,7 +268,9 @@ $(document).ready(function() {
                                 $('#TI_Address').html( _contractAddress );
                                 $AddTokenData.tokenAddress = _contractAddress; 
                                 
-                                $('[data-cms="addToMetaMask"]').attr('disabled', false).attr("data-param",  JSON.stringify($AddTokenData) );
+                                $('[data-cms="addToMetaMask"]')
+                                    .removeClass('btn-warning').addClass('btn-success')
+                                    .attr('disabled', false).attr("data-param",  JSON.stringify($AddTokenData) );
                                 console.log('$AddTokenData: ', $AddTokenData);
                             });
                         });
@@ -471,12 +477,8 @@ $(document).ready(function() {
     /*
         
     */
-    async function addToMetamask() {
+    async function addToMetamask(data) {
         console.log("addToMetamask()");
-        const tokenAddress = contractAddress;
-        const tokenSymbol = contractSymbol;
-        const tokenDecimals = contractDecimals;
-        const tokenImage = "";
 
         try {
             // wasAdded is a boolean. Like any RPC method, an error may be thrown.
@@ -485,10 +487,10 @@ $(document).ready(function() {
                 params: {
                     type: "ERC20", // Initially only supports ERC20, but eventually more!
                     options: {
-                        address: tokenAddress, // The address that the token is at.
-                        symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
-                        decimals: tokenDecimals, // The number of decimals in the token
-                        image: tokenImage, // A string url of the token logo
+                        address     : data.tokenAddress, // The address that the token is at.
+                        symbol      : data.tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
+                        decimals    : data.tokenDecimals, // The number of decimals in the token
+                        image       : data.tokenImage, // A string url of the token logo
                     },
                 },
             });
@@ -620,7 +622,7 @@ $(document).ready(function() {
                 getTokenInfo();
                 break;
             case 'addToMetaMask':
-                addToMetamask();
+                addToMetamask( $Data );
                 break;
             case 'addNetwork':
                 let $NetworkPort 
@@ -648,9 +650,9 @@ $(document).ready(function() {
         getTokenInfo();
     });
 
-    $("#addToMetamask").click(function() {
-        addToMetamask();
-    });
+    // $("#addToMetamask").click(function() {
+    //     addToMetamask();
+    // });
 
     $("#addMain").click(function() {
         addNetworkToMetaMask(1881);
