@@ -611,6 +611,7 @@ $(document).ready(function() {
     */
     $Body.on('click', '[data-cmd]', function(event) {
         event.preventDefault();
+        console.log('click=>[data-cmd]');
 
         /*
             Check MetaMask
