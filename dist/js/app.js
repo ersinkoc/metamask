@@ -98,7 +98,7 @@ $(document).ready(function() {
         },
 
         request:{
-            _getBlockNumber: function(){
+            _getBlockNumber: async function(){
                 console.log("$.OXO.request._getBlockNumber()");
                 // try {
                 //     var latestBlockNumber = await ethereum.request({
@@ -108,7 +108,7 @@ $(document).ready(function() {
                 //     console.log('Error: ' + error);
                 // };
 
-                const latestBlockNumber = new Promise( $.OXO.Web3.eth.getBlockNumber() );
+                const latestBlockNumber = await $.OXO.Web3.eth.getBlockNumber();
                 console.log("Latest Block Number: " + latestBlockNumber);
                 $("#LatesBlockNumber").html(latestBlockNumber);
                 
