@@ -99,6 +99,9 @@ $(document).ready(function() {
         },
 
         request:{
+            /*--------------------------------------------------
+
+            --------------------------------------------------*/
             _getBlockNumber: async function(){
                 console.log("$.OXO.request._getBlockNumber()");
                 // try {
@@ -108,18 +111,59 @@ $(document).ready(function() {
                 // } catch (error) {
                 //     console.log('Error: ' + error);
                 // };
+                return await $.OXO.Web3.eth.getBlockNumber();
+                // console.log("Latest Block Number: " + latestBlockNumber);
+                //return latestBlockNumber;
+            },
+            /*--------------------------------------------------
 
-                const latestBlockNumber = await $.OXO.Web3.eth.getBlockNumber();
-                console.log("Latest Block Number: " + latestBlockNumber);
-                $("#LatesBlockNumber").html(latestBlockNumber);
+            --------------------------------------------------*/
+            _getTokenInfo: function(_contractAddress) {
+                console.log("$.OXO.request._getTokenInfo("+ _contractAddress +")");
                 
-                return latestBlockNumber;
+                return new Promise(function (resolve, reject) {
+                    try {
+                        $.OXO.Web3.eth.getCode(_contractAddress).then(function(result) {
+                            if (result == "0x") {
+                               reject('This is not a contract address...');
+                            }else if(result != "0x"){
+                                let contractFirst = new $.OXO.Web3.eth.Contract(
+                                    $.OXO.data.erc20ABI,
+                                    _contractAddress
+                                );
+
+                                Promise.all([
+                                    getName(contractFirst), 
+                                    getSymbol(contractFirst), 
+                                    getDecimals(contractFirst)
+                                ]).then((response) => {
+                                    $.OXO.data.CurrentTokenData.tokenImage    = '';
+                                    $.OXO.data.CurrentTokenData.tokenName     = response[0]
+                                    $.OXO.data.CurrentTokenData.tokenSymbol   = response[1];
+                                    $.OXO.data.CurrentTokenData.tokenDecimals = response[2];
+                                    $.OXO.data.CurrentTokenData.tokenAddress  = _contractAddress; 
+                                });
+
+                                resolve( $.OXO.data.CurrentTokenData );
+                            }
+                        });
+                    } catch (error) { $.OXO.tools.error(error); reject(error) }
+                });
             }
         },
 
         tools:{
+            /*--------------------------------------------------
+
+            --------------------------------------------------*/
             error   : function(Msg){ Swal.fire({title: 'Error', text: Msg, icon: 'error'}); },
+            /*--------------------------------------------------
+
+            --------------------------------------------------*/
             info    : function(Msg){ Swal.fire({title: 'Info', text: Msg, icon: 'info'}); },
+            /*--------------------------------------------------
+
+            --------------------------------------------------*/
             success : function(Msg){ Swal.fire({title: 'Success', text: Msg, icon: 'success'}); },
             /*--------------------------------------------------
 
@@ -254,6 +298,14 @@ $(document).ready(function() {
 
 
 
+
+
+
+
+
+
+
+
     /*
         handle Disconnect
     */
@@ -309,16 +361,18 @@ $(document).ready(function() {
 
         if (accounts.length === 0) {
             console.log("Please connect to MetaMask.");
-            $("#enableMetamask").html("Connect with Metamask");
-            $("#balance").html("...");
-            $("#networkid").html("...");
+            console.log('handleAccountsChanged 0: ', 'Connect with Metamask');
+            // $("#enableMetamask").html("Connect with Metamask");
+            //$("#balance").html("...");
+            // $("#networkid").html("...");
         } else if (accounts[0] !== currentAccount) {
             currentAccount = accounts[0];
-            $("#enableMetamask").html(currentAccount);
+            console.log('handleAccountsChanged 1: ', currentAccount);
+            // $("#enableMetamask").html(currentAccount);
             $("#status").html("");
             if (currentAccount != null) {
-                // Set the button label
-                $("#enableMetamask").html(currentAccount);
+                console.log('handleAccountsChanged 2: ', currentAccount);
+                // $("#enableMetamask").html(currentAccount);
                 
                 getBalance(currentAccount).then(function(result) {
 
@@ -326,7 +380,7 @@ $(document).ready(function() {
                 });
                 
                 getChainId();
-                $.OXO.request._getBlockNumber();
+                $("#LatesBlockNumber").html( $.OXO.request._getBlockNumber() );
             }
         }
         console.log(
@@ -355,68 +409,6 @@ $(document).ready(function() {
         SetNetworkInfo('connect');
         
         return chainId;
-    };
-
-    /*
-        
-    */
-    async function getTokenInfo(_contractAddress) {
-        console.log("getTokenInfo");
-        
-        $('#contractaddress').addClass('loading'); /* Loadin Effect */
-
-        $('#TokenResults i').html('...');
-        
-        $('[data-cmd="addToMetaMask"]').attr({
-            'disabled'      : true,
-            'data-param'    : '{}'
-        })
-        .html('Add Token to Metamask')
-        .removeClass('btn-success').addClass('btn-warning')
-
-        try {
-            $.OXO.Web3.eth.getCode(_contractAddress).then(function(result) {
-                if (result == "0x") {
-                    $.OXO.tools.error('This is not a contract address...');
-                    
-                    $("#contractaddress").val("0x");
-                }else if(result != "0x"){
-                    $('#contractaddress').removeClass('loading');
-
-                    let contractFirst = new $.OXO.Web3.eth.Contract(
-                        $.OXO.data.erc20ABI,
-                        _contractAddress
-                    );
-
-                    contractAddress = _contractAddress;
-
-                    Promise.all([
-                        getName(contractFirst), 
-                        getSymbol(contractFirst), 
-                        getDecimals(contractFirst)
-                    ]).then((response) => {
-                        $.OXO.data.CurrentTokenData.tokenImage    = '';
-                        $.OXO.data.CurrentTokenData.tokenName     = response[0]
-                        $.OXO.data.CurrentTokenData.tokenSymbol   = response[1];
-                        $.OXO.data.CurrentTokenData.tokenDecimals = response[2];
-                        $.OXO.data.CurrentTokenData.tokenAddress  = _contractAddress; 
-
-                        $('[data-cmd="addToMetaMask"]')
-                            .removeClass('btn-warning')
-                            .addClass('btn-success')
-                            .attr({
-                                'disabled'  : false,
-                                'data-param': JSON.stringify( $.OXO.data.CurrentTokenData )
-                            });
-                        
-                        $('#TI_Name').html( $.OXO.data.CurrentTokenData.tokenName );
-                        $('#TI_Symbol').html( $.OXO.data.CurrentTokenData.tokenSymbol );
-                        $('#TI_Decimals').html( $.OXO.data.CurrentTokenData.tokenDecimals );
-                        $('#TI_Address').html( $.OXO.data.CurrentTokenData.tokenAddress );
-                    });
-                }
-            });
-        } catch (error) { $.OXO.tools.error(error); }
     };
 
     /*
@@ -706,7 +698,37 @@ $(document).ready(function() {
                 $.OXO.connect();
                 break;
             case 'getTokenInfo':
-                getTokenInfo( $("#contractaddress").val().trim() );
+                $('#contractaddress').addClass('loading'); $('#TokenResults i').html('...');
+                
+                $('[data-cmd="addToMetaMask"]')
+                    .attr({
+                        'disabled'      : true,
+                        'data-param'    : '{}'
+                    }).html('Add Token to Metamask')
+                    .removeClass('btn-success').addClass('btn-warning')
+
+                $('[data-cmd="addToMetaMask"]')
+                    .removeClass('btn-warning')
+                    .addClass('btn-success')
+                    .attr({
+                        'disabled'  : false,
+                        'data-param': JSON.stringify( response )
+                    });
+
+                $.OXO.request._getTokenInfo( $("#contractaddress").val().trim() )
+                    .then(function(response){
+                        $('#contractaddress').removeClass('loading');
+                        
+                        $('#TI_Name').html( response.tokenName );
+                        $('#TI_Symbol').html( response.tokenSymbol );
+                        $('#TI_Decimals').html( response.tokenDecimals );
+                        $('#TI_Address').html( response.tokenAddress );
+
+                    }).catch(function(err){
+                        $('#contractaddress').removeClass('loading');
+                        $("#contractaddress").val("0x");
+                    });
+
                 break;
             case 'addToMetaMask':
                 addToMetamask( $Data );
@@ -729,25 +751,6 @@ $(document).ready(function() {
         event.preventDefault();
         /* Act on the event */
     });
-    // $("#ConnectMetaMask").click(function() {
-    //     connect();
-    // });
-
-    // $("#getTokenInfo").click(function() {
-    //     getTokenInfo();
-    // });
-
-    // $("#addToMetamask").click(function() {
-    //     addToMetamask();
-    // });
-
-    // $("#addMain").click(function() {
-    //     ChangeNetwork(1881);
-    // });
-
-    // $("#addTest").click(function() {
-    //     ChangeNetwork(91881);
-    // });
 
     $("#toBlacklist").click(function() {
         addBlacklist();
