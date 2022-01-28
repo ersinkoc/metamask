@@ -231,6 +231,7 @@ $(document).ready(function() {
             'disabled'      : true,
             'data-param'    : '{}'
         })
+        .html('Add Token to Metamask')
         .removeClass('btn-success').addClass('btn-warning')
 
         try {
@@ -481,7 +482,7 @@ $(document).ready(function() {
         
     */
     async function addToMetamask(data) {
-        console.log("addToMetamask()");
+        console.log("addToMetamask() => ", data );
 
         try {
             // wasAdded is a boolean. Like any RPC method, an error may be thrown.
@@ -499,12 +500,26 @@ $(document).ready(function() {
             });
 
             if (wasAdded) {
-                console.log("Thanks for your interest!");
+                $('[data-cms="addToMetaMask"]').html('Token Added To MetaMask');
+
+                Swal.fire({
+                  title     : 'Success',
+                  text      : 'Token Added To MetaMask',
+                  icon      : 'success',
+                  timer     : 2500
+                });
+                // console.log("Thanks for your interest!");
             } else {
                 console.log("Your loss!");
             }
         } catch (error) {
-            console.log(error);
+            Swal.fire({
+                title     : 'Ethereum Error',
+                text      : error,
+                icon      : 'error',
+                timer     : 2500
+            });
+            // console.log(error);
         }
     };
 
@@ -614,8 +629,8 @@ $(document).ready(function() {
         let $Command    = $(this).data('cmd');
         let $Data       = $(this).data('param') ? JSON.parse($(this).attr('data-param')) : {};
 
-        console.log($Data)
-        console.table($Data)
+        console.log('Komut: ', $Command)
+        console.log('Param: ', $Data)
 
         switch($Command) {
             case 'ConnectMetaMask':
