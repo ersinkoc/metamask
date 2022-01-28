@@ -1,6 +1,6 @@
 let $Body = $('body');
 let currentAccount=null, web3, m, contractAddress, chainId;
-let erc20ABI, erc20Token;
+let erc20ABI;
 let contractSymbol,contractDecimals,contractFirst,contractName;
 let stakeTokenContractAddress ="0xa844347E8DdDeE34a5c014626644CBa30231b6e2";
 let stakeTokenABI,stakeToken;
@@ -52,24 +52,24 @@ $(document).ready(function() {
     /*
         Fetch JSON File
     */
-    // $.getJSON("ERC20.json", function (result) {
-    //   erc20ABI = result.abi;
-    // });
-    // $.getJSON("StakeToken.json", function (result) {
-    //   stakeTokenABI = result.abi;
-    // });
-    if($TestLocal==false){
-        $.when($.getJSON('/ERC20.json'), $.getJSON('/StakeToken.json')).done(function(file1Result,file2Result){
-            erc20ABI        = file1Result[0];
-            console.log('ERC20.json Loaded!');
+    $.getJSON("ERC20.json", function (result) {
+      erc20ABI = result.abi;
+    });
+    $.getJSON("StakeToken.json", function (result) {
+      stakeTokenABI = result.abi;
+    });
+    // if($TestLocal==false){
+    //     $.when($.getJSON('/ERC20.json'), $.getJSON('/StakeToken.json')).done(function(file1Result,file2Result){
+    //         erc20ABI        = file1Result[0];
+    //         console.log('ERC20.json Loaded!');
 
-            stakeTokenABI   = file2Result[0];
-            console.log('StakeToken.json Loaded!');
-        });
+    //         stakeTokenABI   = file2Result[0];
+    //         console.log('StakeToken.json Loaded!');
+    //     });
 
-        console.log('erc20ABI', erc20ABI)
-        console.log('StakeToken', stakeTokenABI)
-    }
+    //     console.log('erc20ABI', erc20ABI)
+    //     console.log('StakeToken', stakeTokenABI)
+    // }
 
     /*
         handle Disconnect
@@ -230,13 +230,7 @@ $(document).ready(function() {
             'disabled'      : true,
             'data-param'    : '{}'
         });
-        // $("#getName").html("");
-        // $("#getSymbol").html("");
-        // $("#getDecimals").html("");
-        // $("#getName").html("");
-        // $("#btnToken").html("Add Token to Metamask");
-        // $("#contractAddress").html("");
-        // $("#tokenInfo").hide();
+
         try {
             web3.eth.getCode(_contractAddress).then(function(result) {
                 if (result == "0x") {
@@ -248,19 +242,16 @@ $(document).ready(function() {
                     
                     $("#contractaddress").val("0x");
                 }else if(result != "0x"){
-                    var contractFirst = new web3.eth.Contract(
+                    let contractFirst = new web3.eth.Contract(
                         erc20ABI,
                         _contractAddress
                     );
 
-                    erc20Token = contractFirst;
                     contractAddress = _contractAddress;
-                    $("#tokenInfo").show();
-                    $("#contractAddress").html(contractAddress);
 
-                    let TI_Name     = getName(erc20Token);
-                    let TI_Symbol   = getSymbol(erc20Token);
-                    let TI_Decimals = getDecimals(erc20Token);
+                    let TI_Name     = getName(contractFirst);
+                    let TI_Symbol   = getSymbol(contractFirst);
+                    let TI_Decimals = getDecimals(contractFirst);
                     let TI_Address  = _contractAddress;
 
                     $('#TI_Name').html( TI_Name );
