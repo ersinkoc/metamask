@@ -258,10 +258,8 @@ $(document).ready(function() {
     /*
         
     */
-    async function getTokenInfo() {
+    async function getTokenInfo(_contractAddress) {
         console.log("getTokenInfo");
-
-        let _contractAddress = $("#contractaddress").val().trim();
         
         $('#contractaddress').addClass('loading'); /* Loadin Effect */
 
@@ -684,14 +682,14 @@ $(document).ready(function() {
                 connect();
                 break;
             case 'getTokenInfo':
-                getTokenInfo();
+                getTokenInfo( $("#contractaddress").val().trim() );
                 break;
             case 'addToMetaMask':
                 addToMetamask( $Data );
                 break;
             case 'ChangeNetwork':
                 let $NetworkPort 
-                ChangeNetwork( $Data.Port ); // ChangeNetwork(1881);
+                ChangeNetwork( $Data.chainId );
                 break;
             case 'addToBlackList':
                 addBlacklist();
@@ -711,9 +709,9 @@ $(document).ready(function() {
     //     connect();
     // });
 
-    $("#getTokenInfo").click(function() {
-        getTokenInfo();
-    });
+    // $("#getTokenInfo").click(function() {
+    //     getTokenInfo();
+    // });
 
     // $("#addToMetamask").click(function() {
     //     addToMetamask();
