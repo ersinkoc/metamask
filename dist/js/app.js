@@ -1,7 +1,7 @@
 window.app = {}
 
 let $Body = $('body');
-let currentAccount=null, contractAddress, chainId;
+let chainId;
 let symbol="MONEY";
 let contractSymbol,contractDecimals,contractFirst,contractName;
 
@@ -41,15 +41,24 @@ const NetworkInfo = {
     READY
 ********************************************************/
 $(document).ready(function() {
-    console.log('jQuery: Window Ready!');
+    let $Body = $('body');
 
     /*
-        OXO.Script
+        OXO.App
         $.OXO.data.CurrentTokenData
     */
     $.OXO = {
+        /* ########################
+            WEB3
+        ######################## */
         Web3: null,
+        /* ########################
+            APP DATA
+        ######################## */
         data:{
+            /*--------------------------------------------------
+                OXO: App Variables
+            --------------------------------------------------*/
             IsTest          : (location.origin==='file://' ? true : false),
             web3            : null,
             currentAccount  : null, 
@@ -61,8 +70,13 @@ $(document).ready(function() {
             stakeToken      : null,
             CurrentTokenData: {}
         },
-
+        /* ########################
+            APP INITIALIZE
+        ######################## */
         init: function(){
+            /*--------------------------------------------------
+                OXO: Init App
+            --------------------------------------------------*/
             if($.OXO.data.IsTest==false){
                 $.getJSON("ERC20.json", function (result) {
                     $.OXO.data.erc20ABI = result.abi;
@@ -72,9 +86,14 @@ $(document).ready(function() {
                 });
             }
         },
-
+        /* ########################
+            OXO STAKE
+        ######################## */
         stake: {
             ContractAddress: "0xa844347E8DdDeE34a5c014626644CBa30231b6e2",
+            /*--------------------------------------------------
+                OXO: Get Stake Token
+            --------------------------------------------------*/
             _getStakeToken: function(){
                 return new Promise(function (resolve, reject) {
                     if ($.OXO.data.stakeToken == null) {
@@ -93,30 +112,27 @@ $(document).ready(function() {
                 });
             }
         },
-
+        /* ########################
+            HANDLERS
+        ######################## */
         handlers:{
 
         },
-
+        /* ########################
+            REQUEST
+        ######################## */
         request:{
             /*--------------------------------------------------
-
+                OXO: Get Block Number
             --------------------------------------------------*/
-            _getBlockNumber: async function(){
+            _getBlockNumber: function(){
                 console.log("$.OXO.request._getBlockNumber()");
-                // try {
-                //     var latestBlockNumber = await ethereum.request({
-                //         method: 'eth_blockNumber'
-                //     });
-                // } catch (error) {
-                //     console.log('Error: ' + error);
-                // };
-                return await $.OXO.Web3.eth.getBlockNumber();
-                // console.log("Latest Block Number: " + latestBlockNumber);
-                //return latestBlockNumber;
+                return new Promise(function (resolve, reject) {
+                    resolve( $.OXO.Web3.eth.getBlockNumber() );
+                });
             },
             /*--------------------------------------------------
-
+                OXO: Get Token Info
             --------------------------------------------------*/
             _getTokenInfo: function(_contractAddress) {
                 console.log("$.OXO.request._getTokenInfo("+ _contractAddress +")");
@@ -149,9 +165,29 @@ $(document).ready(function() {
                         });
                     } catch (error) { $.OXO.tools.error(error); reject(error) }
                 });
+            },
+            /*--------------------------------------------------
+                OXO: Get Balance
+            --------------------------------------------------*/
+            _getBalance: function( _currentAccount=$.OXO.data.currentAccount ){
+                console.log("$.OXO.request._getBalance("+ _currentAccount +")");
+                
+                return new Promise(function (resolve, reject) {
+                    try {
+                        $.OXO.Web3.eth.getBalance(_currentAccount)
+                            .then(function(result) {
+                                if (NetworkInfo[chainId] != undefined){
+                                    symbol = NetworkInfo[chainId].symbol
+                                };
+                                resolve(result)
+                            });
+                    }catch(error){reject(error)}
+                });
             }
         },
-
+        /* ########################
+            TOOLS
+        ######################## */
         tools:{
             /*--------------------------------------------------
 
@@ -197,7 +233,7 @@ $(document).ready(function() {
 
             --------------------------------------------------*/
             IsMetaMask: async function(){
-                console.log("OXO.tools.IsMetaMask()");
+                console.log("$.OXO.tools.IsMetaMask()");
 
                 return new Promise(function (resolve, reject) {
                     if (typeof window.ethereum !== "undefined") {
@@ -322,20 +358,20 @@ $(document).ready(function() {
         console.log("handleChainChanged(" + chain + ")");
         cId = parseInt(chain, 16);
 
-        if (chainId !== cId){
+        if ($.OXO.data.chainId !== cId){
             window.location.reload()
             return false;
         };
 
-        chainId = cId;
+        $.OXO.data.chainId = cId;
         
         SetNetworkInfo('handleChainChanged');
     };
     function SetNetworkInfo(fName){
-        console.log('chainId: ', fName, chainId);
+        console.log('chainId: ', fName, $.OXO.data.chainId);
 
-        if (NetworkInfo[chainId] !== 'undefined') {
-            let $ChainData = NetworkInfo[chainId];
+        if (NetworkInfo[$.OXO.data.chainId] !== 'undefined') {
+            let $ChainData = NetworkInfo[$.OXO.data.chainId];
 
             $('#ChainName').html( $ChainData.chainName );
             $('#ChainId').html( $ChainData.chainId );
@@ -344,13 +380,13 @@ $(document).ready(function() {
             $('#TokenDecimal').html( $ChainData.decimals );
             $('#RpcUrl').html( $ChainData.rpcUrls );
 
-            var ExplorerURLs = Object.keys(NetworkInfo[chainId].rpcUrls).map(function(k) { 
-                return '<a href="'+ NetworkInfo[chainId].rpcUrls[k] +'" target="_blank" class="btn btn-sm btn-primary">'+ NetworkInfo[chainId].rpcUrls[k]  +'</a>'
+            var ExplorerURLs = Object.keys(NetworkInfo[$.OXO.data.chainId].rpcUrls).map(function(k) { 
+                return '<a href="'+ NetworkInfo[$.OXO.data.chainId].rpcUrls[k] +'" target="_blank" class="btn btn-sm btn-primary">'+ NetworkInfo[$.OXO.data.chainId].rpcUrls[k]  +'</a>'
             }).join("<br>");
             $('#Explorer').html(ExplorerURLs);
 
             $('a[data-cmd="ChangeNetwork"]').removeClass('btn-success');
-            $('a[data-cmd="ChangeNetwork"][data-id="'+ chainId +'"]').addClass('btn-success');
+            $('a[data-cmd="ChangeNetwork"][data-id="'+ $.OXO.data.chainId +'"]').addClass('btn-success');
         }
     }
 
@@ -366,26 +402,31 @@ $(document).ready(function() {
             // $("#enableMetamask").html("Connect with Metamask");
             //$("#balance").html("...");
             // $("#networkid").html("...");
-        } else if (accounts[0] !== currentAccount) {
-            currentAccount = accounts[0];
-            console.log('handleAccountsChanged 1: ', currentAccount);
+        } else if (accounts[0] !== $.OXO.data.currentAccount) {
+            $.OXO.data.currentAccount = accounts[0];
+            console.log('handleAccountsChanged 1: ', $.OXO.data.currentAccount);
             // $("#enableMetamask").html(currentAccount);
             $("#status").html("");
-            if (currentAccount != null) {
-                console.log('handleAccountsChanged 2: ', currentAccount);
+            if ($.OXO.data.currentAccount != null) {
+                console.log('handleAccountsChanged 2: ', $.OXO.data.currentAccount);
                 // $("#enableMetamask").html(currentAccount);
                 
-                getBalance(currentAccount).then(function(result) {
-                    $('#wallet_id').html( currentAccount );
-                    $('#wallet_balance').html( ConvertWei(result) );
+                $.OXO.request._getBalance().then(function(response) {
+                    $('#wallet_id').html( $.OXO.data.currentAccount );
+                    $('#wallet_balance').html( $.OXO.tools.ConvertWei(response) );
+                }).catch(function(err){
+                    $.OXO.tools.error(err);
                 });
                 
                 getChainId();
-                $("#LatesBlockNumber").html( $.OXO.request._getBlockNumber() );
+                $.OXO.request._getBlockNumber().then(function(response){
+                    $("#LatesBlockNumber").html( response );
+                });
+
             }
         }
         console.log(
-            "WalletAddress in HandleAccountChanged [" + currentAccount + "]"
+            "WalletAddress in HandleAccountChanged [" + $.OXO.data.currentAccount + "]"
         );
     };
 
@@ -396,20 +437,20 @@ $(document).ready(function() {
     async function getChainId() {
         console.log("getChainId()");
         //chainId = await web3.eth.net.getId() // From web3 rpc
-        chainId = await window.ethereum.networkVersion; // From Metamask
+        $.OXO.data.chainId = await window.ethereum.networkVersion; // From Metamask
         console.log("Network ID: " + chainId);
 
-        if (NetworkInfo[chainId] != undefined) {
+        if (NetworkInfo[$.OXO.data.chainId] != undefined) {
             $("#networkid").html(
-                chainId + " (" + NetworkInfo[chainId].chainName + ")"
+                $.OXO.data.chainId + " (" + NetworkInfo[$.OXO.data.chainId].chainName + ")"
             );
         } else {
-            $("#networkid").html(chainId + " (Unknown Network)");
+            $("#networkid").html($.OXO.data.chainId + " (Unknown Network)");
         }
 
         SetNetworkInfo('connect');
         
-        return chainId;
+        return $.OXO.data.chainId;
     };
 
     /*
@@ -571,33 +612,6 @@ $(document).ready(function() {
             console.log("Error: " + error);
         }
     };
-
-    /*
-        
-    */
-    function getBalance() {
-        console.log("getBalance()");
-        return new Promise(function (resolve, reject) {
-            try {
-                $.OXO.Web3.eth.getBalance(currentAccount).then(function(result) {
-                    /* Set Symbol */
-                    if (NetworkInfo[chainId] != undefined){
-                        symbol = NetworkInfo[chainId].symbol
-                    };
-                    // resolve($.OXO.Web3.utils.fromWei(result, "ether") + " " + symbol)
-                    resolve(result)
-                    // $("#balance").html();
-                });
-            } catch (error) {
-                console.log("Error: " + error);
-                reject(error);
-            }
-        });
-        // return getBalanceResult;
-    };
-    function ConvertWei(Val){
-        return $.OXO.Web3.utils.fromWei(Val, "ether") + " " + symbol
-    }
 
     /*
         
