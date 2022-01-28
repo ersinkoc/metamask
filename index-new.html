@@ -77,7 +77,7 @@
 		            <span class="badge badge-pill bg-light align-text-bottom">27</span>
 		        </a> -->
 		        <a class="nav-link" data-toggle="tab" href="#wallet">Wallet</a>
-		        <a class="nav-link" href="#">Ipsum</a>
+		        <a class="nav-link" data-toggle="tab" href="#token_information">Token Information</a>
 		        <a class="nav-link" href="#">Link</a>
 		        <a class="nav-link" href="#">Link</a>
 		        <a class="nav-link" href="#">Link</a>
@@ -113,7 +113,7 @@
 							<!-- card -->
 						</div>
 						<!-- TAB: aaaaa -->
-						<!-- TAB: aaaaa -->
+						<!-- TAB: Wallet -->
 						<div class="tab-pane fade" id="wallet" role="tabpanel" aria-labelledby="nav-profile-tab">
 							<div class="row">
 								<div class="col-lg-6 col-sm-12">
@@ -154,12 +154,70 @@
 								</div>
 							</div>
 						</div>
+						<!-- TAB: Wallet -->
+						<!-- TAB: Token Information -->
+						<div class="tab-pane fade" id="token_information" role="tabpanel" aria-labelledby="nav-contact-tab">
+							<!-- card -->
+							<div class="card-block">
+								<div class="d-flex align-items-center p-3 mt-3 text-white-50 bg-purple rounded box-shadow">
+									<img class="mr-3 img-fluid" src="dist/img/oxo-logo.png" alt="" width="48" height="48">
+									<div class="lh-100">
+										<h6 class="mb-0 text-white lh-100">Token Information</h6>
+										<small>OXO Chain Tokens</small>
+									</div>
+								</div>
+								<div class="mb-3 p-3 bg-white rounded box-shadow">
+									<div class="row mb-3">
+										<div class="col-md-12">
+											<div class="form-group mb-0">
+												<label>Token Contract Address</label>
+												<div class="input-group">
+													<input type="text" class="form-control" placeholder="0x" id="contractaddress">
+													<div class="input-group-append">
+
+														<button data-cmd="getTokenInfo" data-param='{}' class="btn btn-sm bg-purple text-white">
+															<i class="fas fa-fingerprint"></i> Get Token Info
+														</button>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-12 pre-tokens">
+											<a href="#" data-cmd="CopyTokenToInfoInput" data-param='{"value":"0x01cE423BeD8Eca832Ffa9CD9aE8A3aB5a0FcBd10"}'>Tether USD</a>
+											<a href="#" data-cmd="CopyTokenToInfoInput" data-param='{"value":"0x54b45f2b3Db26D6D68A08B85AdDb01b70c02BD61"}'>MyToken</a>
+										</div>
+									</div>
+									
+									<div class="row">
+										<div class="col-lg-6 col-sm-12">
+											<h6 class="border-bottom border-gray pb-2 mb-3">Token Information</h6>
+											<dl class="row mb-3" id="TokenResults">
+												<dt class="col-sm-4">Name</dt>
+												<dd class="col-sm-8"><i id="TI_Name"></i></dd>
+												<dt class="col-sm-4">Symbol</dt>
+												<dd class="col-sm-8"><i id="TI_Symbol"></i></dd>
+												<dt class="col-sm-4">Decimals</dt>
+												<dd class="col-sm-8"><i id="TI_Decimals"></i></dd>
+												<dt class="col-sm-4">Address</dt>
+												<dd class="col-sm-8"><i id="TI_Address"></i></dd>
+											</dl>
+										</div>
+										<div class="col-lg-6 col-sm-12">
+											<h6 class="border-bottom border-gray pb-2 mb-3">Token Actions</h6>
+											<button data-cms="addToMetaMask" data-param='{}' class="btn btn-warning" disabled>
+												<span id="btnToken">Add Token to Metamask</span>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- card -->
+						</div>
+						<!-- TAB: Token Information -->
 						<!-- TAB: aaaaa -->
-						<!-- TAB: aaaaa -->
-						<div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+						<div class="tab-pane fade" id="xxxxxx" role="tabpanel" aria-labelledby="nav-contact-tab">
 
 						</div>
-						<!-- TAB: aaaaa -->
 						<!-- TAB: aaaaa -->
 					</div>
 				</div>
@@ -192,7 +250,7 @@
 	            <div class="modal-body">
 	                <div class="row WalletList">
 	                	<div class="col-lg-2 col-sm-3 col-4">
-	                		<a href="#" data-cmd="ConnectMetaMask">
+	                		<a href="#" data-cmd="ConnectMetaMask" data-param='{}'>
 	                			<img src="dist/img/wallet-icons/metamask.jpeg" class="img-fluid" />
 	                			<span>Metamask</span>
 	                		</a>

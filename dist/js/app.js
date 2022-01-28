@@ -4,6 +4,11 @@
 $(document).ready(function() {
     console.log('jQuery: Window Ready');
 
+    let $TestLocal = false;
+    if(location.origin==='file://'){
+        $TestLocal = true;
+    }
+
     let $Body = $('body');
     let currentAccount=null, web3, m, contractAddress, chainId;
     let erc20ABI, erc20Token;
@@ -52,11 +57,13 @@ $(document).ready(function() {
     // $.getJSON("StakeToken.json", function (result) {
     //   stakeTokenABI = result.abi;
     // });
-    $.when($.getJSON('/ERC20.json'), $.getJSON('/StakeToken.json')).done(function(file1Result,file2Result){
-        console.log('JSON Files Loaded!');
-        erc20ABI        = file1Result[0];
-        stakeTokenABI   = file2Result[0];
-    });
+    if($TestLocal==false){
+        $.when($.getJSON('/ERC20.json'), $.getJSON('/StakeToken.json')).done(function(file1Result,file2Result){
+            console.log('JSON Files Loaded!');
+            erc20ABI        = file1Result[0];
+            stakeTokenABI   = file2Result[0];
+        });
+    }
 
     /*
         handle Disconnect
@@ -111,6 +118,8 @@ $(document).ready(function() {
     */
     function connect() {
         console.log("connect()");
+        if($TestLocal==true){return false;}
+
         try {
             web3 = new Web3(window.ethereum);
             //web3 = new Web3(new Web3.providers.HttpProvider("https://rpc.testnet.oxochain.com"));
@@ -204,51 +213,83 @@ $(document).ready(function() {
     */
     async function getTokenInfo() {
         console.log("getTokenInfo");
-        _contractAddress = $("#contractaddress").val().trim();
-        $("#getName").html("");
-        $("#getSymbol").html("");
-        $("#getDecimals").html("");
-        $("#getName").html("");
-        $("#btnToken").html("Add Token to Metamask");
-        $("#contractAddress").html("");
-        $("#tokenInfo").hide();
+
+        let _contractAddress = $("#contractaddress").val().trim();
+        
+        $('#contractaddress').addClass('loading'); /* Loadin Effect */
+
+        $('#TokenResults i').html('...');
+        
+        $('[data-cms="addToMetaMask"]').attr('disabled', true);
+        // $("#getName").html("");
+        // $("#getSymbol").html("");
+        // $("#getDecimals").html("");
+        // $("#getName").html("");
+        // $("#btnToken").html("Add Token to Metamask");
+        // $("#contractAddress").html("");
+        // $("#tokenInfo").hide();
         try {
             web3.eth.getCode(_contractAddress).then(function(result) {
                 if (result == "0x") {
+                    Swal.fire({
+                      title: 'Oooppsy',
+                      text: 'This is not a contract Address...',
+                      icon: 'error'
+                    });
+                    
                     $("#contractaddress").val("0x");
-                }
-                if (result != "0x") {
+                }else if(result != "0x"){
                     var contractFirst = new web3.eth.Contract(
                         erc20ABI,
                         _contractAddress
                     );
+
                     erc20Token = contractFirst;
                     contractAddress = _contractAddress;
                     $("#tokenInfo").show();
                     $("#contractAddress").html(contractAddress);
 
-                    getSymbol();
-                    getDecimals();
-                    getName();
+                    let TI_Name     = getName(erc20Token);
+                    let TI_Symbol   = getSymbol(erc20Token);
+                    let TI_Decimals = getDecimals(erc20Token);
+                    let TI_Address  = _contractAddress;
+
+                    $('#TI_Name').html( TI_Name );
+                    $('#TI_Symbol').html( TI_Symbol );
+                    $('#TI_Decimals').html( TI_Decimals );
+                    $('#TI_Address').html( _contractAddress );
+
+                    let $AddTokenData = {
+                        "tokenAddress"  : _contractAddress, 
+                        "tokenSymbol"   : TI_Symbol, 
+                        "tokenDecimals" : TI_Decimals, 
+                        "tokenImage"    : ""
+                    };
+
+                    $('[data-cms="addToMetaMask"]').attr('disabled', false).attr("data-param",  JSON.stringify($AddTokenData) );
                 }
             });
         } catch (error) {
-            console.log("Error: " + error);
+            Swal.fire({
+              title: 'Ethereum Error',
+              text: error,
+              icon: 'error'
+            });
         }
     };
 
     /*
         
     */
-    async function getSymbol() {
-        console.log("getSymbol");
+    async function getSymbol(tokenData) {
+        console.log("getSymbol();");
         try {
-            erc20Token.methods
+            tokenData.methods
                 .symbol()
                 .call()
                 .then(function(result) {
-                    $("#getSymbol").html(result);
                     contractSymbol = result;
+                    return contractSymbol
                 });
         } catch (error) {
             console.log("Error: " + error);
@@ -258,15 +299,15 @@ $(document).ready(function() {
     /*
         
     */
-    async function getDecimals() {
-        console.log("getDecimals()");
+    async function getDecimals(tokenData) {
+        console.log("getDecimals();");
         try {
-            erc20Token.methods
+            tokenData.methods
                 .decimals()
                 .call()
                 .then(function(result) {
-                    $("#getDecimals").html(result);
                     contractDecimals = result;
+                    return contractDecimals;
                 });
         } catch (error) {
             console.log("Error: " + error);
@@ -276,16 +317,16 @@ $(document).ready(function() {
     /*
         
     */
-    async function getName() {
-        console.log("getName()");
+    async function getName(tokenData) {
+        console.log("getName();");
         try {
-            erc20Token.methods
+            tokenData.methods
                 .name()
                 .call()
                 .then(function(result) {
                     $("#btnToken").html('Add  "' + result + '" to Metamask');
-                    $("#getName").html(result);
                     contractName = result;
+                    return contractName;
                 });
         } catch (error) {
             console.log("Error: " + error);
@@ -515,13 +556,22 @@ $(document).ready(function() {
     // };
 
     m = detectMetaMask();
-    if (m) {
-        $Body.removeClass('not-connected').addClass('connected');
-        $("#enableMetamask").attr("disabled", false).removeClass('bg-danger').addClass('bg-success');
-        connect(); // Make sure the connected wallet is being returned
-    } else {
-        $("#enableMetamask").attr("disabled", true).removeClass('bg-success').addClass('bg-danger');
-    }
+    
+    function toggleConnection(){
+        if($TestLocal==true){
+            $Body.removeClass('not-connected').addClass('connected');
+            $('.ConnectStatus').html('Local Test').attr("disabled", true).removeClass('bg-success').addClass('bg-info');
+            return false;
+        };
+
+        if(m){
+            $Body.removeClass('not-connected').addClass('connected');
+            $('.ConnectStatus').html('Disconnec').attr("disabled", false).removeClass('bg-danger').addClass('bg-success')
+        }else{
+            $('.ConnectStatus').html('Connect Wallet').attr("disabled", true).removeClass('bg-success').addClass('bg-danger');
+        }
+    };
+    toggleConnection();
 
     $("#tokenInfo").hide();
 
@@ -531,17 +581,25 @@ $(document).ready(function() {
     $Body.on('click', '[data-cmd]', function(event) {
         event.preventDefault();
 
-        if(!window.ethereum){
-            Swal.fire({
-              title: 'Oooppsy',
-              text: 'MetaMask support was not found in your browser.',
-              icon: 'error'
-            });
-            return false;
+        /*
+            Check MetaMask
+        */
+        if($TestLocal==false){
+            if(!window.ethereum){
+                Swal.fire({
+                  title: 'Oooppsy',
+                  text: 'MetaMask support was not found in your browser.',
+                  icon: 'error'
+                });
+                return false;
+            };
         };
 
         let $Command    = $(this).data('cmd');
-        let $Data       = $(this).data('param') ? JSON.parse($(this).data('param')) : {};
+        let $Data       = $(this).data('param') ? JSON.parse($(this).attr('data-param')) : {};
+
+        console.log($Data)
+        console.table($Data)
 
         switch($Command) {
             case 'ConnectMetaMask':
@@ -562,6 +620,9 @@ $(document).ready(function() {
                 break;
             case 'RemoveFromBlackList':
                 removeBlacklist();
+                break;
+            case 'CopyTokenToInfoInput':
+                $('#contractaddress').val( $Data.value );
                 break;
             default:
         }

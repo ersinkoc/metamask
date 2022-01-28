@@ -94,6 +94,46 @@ body.not-connected #notConnected{
 }
 
 /*----------------------------------------------------------------
+	Pre-Tokens
+----------------------------------------------------------------*/
+.pre-tokens {
+
+}
+.pre-tokens a {
+	margin-top:4px;
+	font-size: 11px;
+	padding: 6px 10px;
+	background-color: rgb(111 66 193 / 70%);
+	color: #fff;
+	cursor: pointer;
+	display: inline-block;
+}
+.pre-tokens a:hover{
+	background-color: rgb(111 66 193 / 100%);
+}
+
+input.loading{
+	background-image: url('../img/loading.svg');
+	background-repeat: no-repeat;
+	background-position: 99% center;
+	background-size: 26px;
+	background-color: #dfdfdf;
+}
+
+#TokenResults {
+
+}
+#TokenResults dt{
+    font-size: 14px;
+    font-weight: 600;
+}
+#TokenResults dd i{
+    font-size: 12px;
+    font-weight: 400;
+    font-style: initial !important;
+    display: block;
+}
+/*----------------------------------------------------------------
 	Wallet List
 ----------------------------------------------------------------*/
 .WalletList div{
