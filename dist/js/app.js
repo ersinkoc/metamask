@@ -254,21 +254,21 @@ $(document).ready(function() {
                     getName(contractFirst).then((res)=>{
                         $('#TI_Name').html( res );
                         // $AddTokenData.tokenAddress = res; 
-                    });
-                    getSymbol(contractFirst).then((res)=>{
-                        $('#TI_Symbol').html( res );
-                        $AddTokenData.tokenSymbol = res; 
-                    });
-                    getDecimals(contractFirst).then((res)=>{
-                        $('#TI_Decimals').html( res );
-                        $AddTokenData.tokenDecimals = res; 
-                    });
+                        getSymbol(contractFirst).then((res)=>{
+                            $('#TI_Symbol').html( res );
+                            $AddTokenData.tokenSymbol = res; 
+                            getDecimals(contractFirst).then((res)=>{
+                                $('#TI_Decimals').html( res );
+                                $AddTokenData.tokenDecimals = res; 
 
-                    $('#TI_Address').html( _contractAddress );
-                    $AddTokenData.tokenAddress = _contractAddress; 
-
-                    console.log('$AddTokenData: ', $AddTokenData);
-                    $('[data-cms="addToMetaMask"]').attr('disabled', false).attr("data-param",  JSON.stringify($AddTokenData) );
+                                $('#TI_Address').html( _contractAddress );
+                                $AddTokenData.tokenAddress = _contractAddress; 
+                                
+                                $('[data-cms="addToMetaMask"]').attr('disabled', false).attr("data-param",  JSON.stringify($AddTokenData) );
+                                console.log('$AddTokenData: ', $AddTokenData);
+                            });
+                        });
+                    });
                 }
             });
         } catch (error) {
