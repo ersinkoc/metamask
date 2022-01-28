@@ -10,7 +10,7 @@ $(document).ready(function() {
     }
 
     let $Body = $('body');
-    let currentAccount=null, web3, m, contractAddress, chainId, web3;
+    let currentAccount=null, web3, m, contractAddress, chainId;
     let erc20ABI, erc20Token;
     let contractSymbol,contractDecimals,contractFirst,contractName;
     let stakeTokenContractAddress ="0xa844347E8DdDeE34a5c014626644CBa30231b6e2";
@@ -162,7 +162,7 @@ $(document).ready(function() {
             ethereum.on("accountsChanged", handleAccountsChanged);
             ethereum.on("chainChanged", handleChainChanged);
             ethereum.on("disconnet", handleDisconnect);
-            console.log(ethereum);
+            console.log('detectMetaMask ethereum: ', ethereum);
             return true;
         } else {
             console.log("Metamask is not installed!");
