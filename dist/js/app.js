@@ -261,7 +261,7 @@ $(document).ready(function() {
                 }
             });
 
-            $.OXO.toggleConnection();
+            // $.OXO.toggleConnection();
             // $.OXO.Tools.toggleConnection();
         }
     };
