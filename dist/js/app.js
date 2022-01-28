@@ -1,5 +1,3 @@
-'use strict';
-
 /********************************************************
     READY
 ********************************************************/
@@ -7,22 +5,11 @@ $(document).ready(function() {
     console.log('jQuery: Window Ready');
 
     let $Body = $('body');
-    let currentAccount = null;
-    let web3;
-    let contractAddress;
-    let chainId;
-
-    let erc20ABI;
-    let erc20Token;
-
-    let contractSymbol;
-    let contractDecimals;
-    let contractFirst;
-    let contractName;
-
+    let currentAccount=null, web3, m, contractAddress, chainId;
+    let erc20ABI, erc20Token;
+    let contractSymbol,contractDecimals,contractFirst,contractName;
     let stakeTokenContractAddress ="0xa844347E8DdDeE34a5c014626644CBa30231b6e2";
-    let stakeTokenABI;
-    let stakeToken;
+    let stakeTokenABI,stakeToken;
 
     const NetworkInfo = {
         1: {
