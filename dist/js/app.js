@@ -108,7 +108,7 @@ $(document).ready(function() {
                 //     console.log('Error: ' + error);
                 // };
 
-                const latestBlockNumber = await $.OXO.Web3.eth.getBlockNumber();
+                const latestBlockNumber = return new Promise( $.OXO.Web3.eth.getBlockNumber() );
                 console.log("Latest Block Number: " + latestBlockNumber);
                 $("#LatesBlockNumber").html(latestBlockNumber);
                 
