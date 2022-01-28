@@ -48,6 +48,7 @@ $(document).ready(function() {
         $.OXO.data.erc20ABI
     */
     $.OXO = {
+        Web3: null,
         data:{
             IsTest          : (location.origin==='file://' ? true : false),
             web3            : null,
@@ -77,7 +78,7 @@ $(document).ready(function() {
                 return new Promise(function (resolve, reject) {
                     if ($.OXO.data.stakeToken == null) {
                         try {
-                            $.OXO.data.stakeToken = new $.OXO.data.web3.eth.Contract(
+                            $.OXO.data.stakeToken = new $.OXO.Web3.eth.Contract(
                                 $.OXO.data.stakeTokenABI,
                                 $.OXO.stake.ContractAddress
                             );
@@ -94,6 +95,25 @@ $(document).ready(function() {
 
         handlers:{
 
+        },
+
+        request:{
+            _getBlockNumber: function(){
+                console.log("$.OXO.request._getBlockNumber()");
+                // try {
+                //     var latestBlockNumber = await ethereum.request({
+                //         method: 'eth_blockNumber'
+                //     });
+                // } catch (error) {
+                //     console.log('Error: ' + error);
+                // };
+
+                const latestBlockNumber = await $.OXO.Web3.eth.getBlockNumber();
+                console.log("Latest Block Number: " + latestBlockNumber);
+                $("#LatesBlockNumber").html(latestBlockNumber);
+                
+                return latestBlockNumber;
+            }
         },
 
         tools:{
@@ -113,7 +133,7 @@ $(document).ready(function() {
                     $Body.removeClass('not-connected').addClass('connected');
                     $('.ConnectStatus').html('Disconnect').attr("disabled", false).removeClass('bg-danger').addClass('bg-success')
 
-                    if($.OXO.data.web3 == null){
+                    if($.OXO.Web3 == null){
                         $.OXO.connect();
                     };
                 }else{
@@ -151,7 +171,7 @@ $(document).ready(function() {
 
             --------------------------------------------------*/
             ConvertWei: function(Val){
-                return $.OXO.data.web3.utils.fromWei(Val, "ether") + " " + symbol
+                return $.OXO.Web3.utils.fromWei(Val, "ether") + " " + symbol
             }
             /*--------------------------------------------------
             
@@ -162,10 +182,10 @@ $(document).ready(function() {
             if($.OXO.data.IsTest){return false;}
 
             try {
-                $.OXO.data.web3 = new Web3(window.ethereum);
-                //web3 = new Web3(new Web3.providers.HttpProvider("https://rpc.testnet.oxochain.com"));
-                //getChainId();
-                //getBlockNumber();
+                $.OXO.Web3 = new Web3(window.ethereum);
+                // web3 = new Web3(new Web3.providers.HttpProvider("https://rpc.testnet.oxochain.com"));
+                // getChainId();
+                // $.OXO.request._getBlockNumber();
             } catch (error) {
                 Swal.fire({
                   title: 'Ethereum Error',
@@ -307,7 +327,7 @@ $(document).ready(function() {
                 });
                 
                 getChainId();
-                getBlockNumber();
+                $.OXO.request._getBlockNumber();
             }
         }
         console.log(
@@ -315,87 +335,6 @@ $(document).ready(function() {
         );
     };
 
-    /*
-        
-    */
-    // function connect() {
-    //     console.log("connect()");
-    //     if($.OXO.data.IsTest==true){return false;}
-
-    //     try {
-    //         web3 = new Web3(window.ethereum);
-    //         //web3 = new Web3(new Web3.providers.HttpProvider("https://rpc.testnet.oxochain.com"));
-    //         //getChainId();
-    //         //getBlockNumber();
-    //     } catch (error) {
-    //         Swal.fire({
-    //           title: 'Ethereum Error',
-    //           text: error,
-    //           icon: 'error'
-    //         });
-    //         // alert(error);
-    //         return false
-    //     }
-
-    //     ethereum.request({ method: "net_version" }).then(function(result) {
-    //         handleChainChanged;
-    //     })
-    //     .catch((err) => {
-    //         console.error(err);
-    //         return false
-    //     });
-
-    //     ethereum.request({ method: "eth_requestAccounts" }).then(handleAccountsChanged)
-    //     .catch((err) => {
-    //         if (err.code === 4001) {
-    //             // EIP-1193 userRejectedRequest error
-    //             // If this happens, the user rejected the connection request.
-    //             console.log("Please connect to MetaMask.");
-    //             $("#status").html("You refused to connect Metamask");
-    //         } else {
-    //             console.error(err);
-    //             return false
-    //         }
-    //     });
-
-    //     $.OXO.tools.toggleConnection(); 
-    // };
-
-    /*
-        
-    */
-    // function detectMetaMask() {
-    //     console.log("detectMetaMask()");
-    //     if (typeof window.ethereum !== "undefined") {
-    //         ethereum.on("accountsChanged", handleAccountsChanged);
-    //         ethereum.on("chainChanged", handleChainChanged);
-    //         ethereum.on("disconnet", handleDisconnect);
-    //         console.log('detectMetaMask ethereum: ', ethereum);
-    //         return true;
-    //     } else {
-    //         console.log("Metamask is not installed!");
-    //         return false;
-    //     }
-    // };
-
-    /*
-        
-    */
-    async function getBlockNumber() {
-        console.log("getBlockNumber()");
-        const latestBlockNumber = await $.OXO.data.web3.eth.getBlockNumber();
-        /*    try {
-        var latestBlockNumber = await ethereum.request({
-        method: 'eth_blockNumber'
-        });
-        } catch (error) {
-        console.log('Error: ' + error);
-        }
-        */
-        console.log("Block Number: " + latestBlockNumber);
-        $("#blocknumber").html(latestBlockNumber);
-        return latestBlockNumber;
-    };
 
     /*
         
@@ -437,7 +376,7 @@ $(document).ready(function() {
         .removeClass('btn-success').addClass('btn-warning')
 
         try {
-            $.OXO.data.web3.eth.getCode(_contractAddress).then(function(result) {
+            $.OXO.Web3.eth.getCode(_contractAddress).then(function(result) {
                 if (result == "0x") {
                     Swal.fire({
                         title: 'Oooppsy',
@@ -449,7 +388,7 @@ $(document).ready(function() {
                 }else if(result != "0x"){
                     $('#contractaddress').removeClass('loading');
 
-                    let contractFirst = new $.OXO.data.web3.eth.Contract(
+                    let contractFirst = new $.OXO.Web3.eth.Contract(
                         $.OXO.data.erc20ABI,
                         _contractAddress
                     );
@@ -557,10 +496,10 @@ $(document).ready(function() {
     */
     async function Send5Money() {
         try {
-            let value = $.OXO.data.web3.utils.toWei('5', 'ether');
-            $.OXO.data.web3.eth.sendTransaction({ 
+            let value = $.OXO.Web3.utils.toWei('5', 'ether');
+            $.OXO.Web3.eth.sendTransaction({ 
                 to      : '0xd7cE0CdacCaaDd386d7873b09797748715AA3572', 
-                from    : $.OXO.data.web3.eth.givenProvider.selectedAddress, 
+                from    : $.OXO.Web3.eth.givenProvider.selectedAddress, 
                 value   : value 
             }).then(function(result) {
                 console.log(result);
@@ -573,35 +512,19 @@ $(document).ready(function() {
     /*
         
     */
-    // async function getStakeToken() {
-    //     if ($.OXO.data.stakeToken == null) {
-    //         try {
-    //             $.OXO.data.stakeToken = new $.OXO.data.web3.eth.Contract(
-    //                 $.OXO.data.stakeTokenABI,
-    //                 $.OXO.stake.ContractAddress
-    //             );
-    //         } catch (error) {
-    //             console.log("Error: " + error);
-    //         }
-    //     }
-    // };
-
-    /*
-        
-    */
     async function addBlacklist() {
         console.log("addBlacklist()");
         toAddress = $("#toAddress").val().trim();
-        if ($.OXO.data.web3.utils.isAddress(toAddress)) {
+        if ($.OXO.Web3.utils.isAddress(toAddress)) {
             try {
-                $.OXO.data.web3.eth.getCode(toAddress).then(function(result) {
+                $.OXO.Web3.eth.getCode(toAddress).then(function(result) {
                     if (result == "0x") {
                         $.OXO.stake._getStakeToken().then(function(){
                             
                             $.OXO.data.stakeToken.methods
                                 .addToBlacklist(toAddress)
                                 .send({ 
-                                    from: $.OXO.data.web3.givenProvider.selectedAddress 
+                                    from: $.OXO.Web3.givenProvider.selectedAddress 
                                 }).then(function(result) {
                                     console.log('addBlacklist: ', result);
                                 });
@@ -624,15 +547,15 @@ $(document).ready(function() {
     async function removeBlacklist() {
         console.log("removeBlacklist()");
         toAddress = $("#toAddress").val().trim();
-        if ($.OXO.data.web3.utils.isAddress(toAddress)) {
+        if ($.OXO.Web3.utils.isAddress(toAddress)) {
             try {
-                $.OXO.data.web3.eth.getCode(toAddress).then(function(result) {
+                $.OXO.Web3.eth.getCode(toAddress).then(function(result) {
                     if (result == "0x") {
                         getStakeToken();
                         $.OXO.data.stakeToken.methods
                             .removeFromBlacklist(toAddress)
                             .send({ 
-                                from: $.OXO.data.web3.givenProvider.selectedAddress 
+                                from: $.OXO.Web3.givenProvider.selectedAddress 
                             }).then(function(result) {
                                 console.log(result);
                             });
@@ -660,7 +583,7 @@ $(document).ready(function() {
                 .totalRewarded()
                 .call()
                 .then(function(result) {
-                    $("#totalRewardedSpan").html( $.OXO.data.web3.utils.fromWei(result, "ether") );
+                    $("#totalRewardedSpan").html( $.OXO.Web3.utils.fromWei(result, "ether") );
                     console.log(result);
                 });
         } catch (error) {
@@ -675,12 +598,12 @@ $(document).ready(function() {
         console.log("getBalance()");
         return new Promise(function (resolve, reject) {
             try {
-                $.OXO.data.web3.eth.getBalance(currentAccount).then(function(result) {
+                $.OXO.Web3.eth.getBalance(currentAccount).then(function(result) {
                     /* Set Symbol */
                     if (NetworkInfo[chainId] != undefined){
                         symbol = NetworkInfo[chainId].symbol
                     };
-                    // resolve($.OXO.data.web3.utils.fromWei(result, "ether") + " " + symbol)
+                    // resolve($.OXO.Web3.utils.fromWei(result, "ether") + " " + symbol)
                     resolve(result)
                     // $("#balance").html();
                 });
@@ -692,7 +615,7 @@ $(document).ready(function() {
         // return getBalanceResult;
     };
     function ConvertWei(Val){
-        return $.OXO.data.web3.utils.fromWei(Val, "ether") + " " + symbol
+        return $.OXO.Web3.utils.fromWei(Val, "ether") + " " + symbol
     }
 
     /*
@@ -748,7 +671,7 @@ $(document).ready(function() {
         console.log("ChangeNetwork(Arguments)");
         console.log(arguments);
         if (NetworkInfo[_chainId] != undefined) {
-            var HexChainId = $.OXO.data.web3.utils.toHex(_chainId); //
+            var HexChainId = $.OXO.Web3.utils.toHex(_chainId); //
             try {
                 await ethereum.request({
                     method: "wallet_switchEthereumChain",
@@ -781,45 +704,6 @@ $(document).ready(function() {
             }
         }
     };
-
-
-    /*
-        
-    */
-    // async function addOxoNetwork() {
-    //     console.log('addOxoNetwork(1881)');
-    //     ChangeNetwork(1881);
-    // };
-
-    /*
-        
-    */
-    // async function addOxoTestnetNetwork() {
-    //     console.log('addOxoTestnetNetwork(91881)');
-    //     ChangeNetwork(91881);
-    // };
-
-    // m = detectMetaMask();
-    
-    // function toggleConnection(){
-    //     if($.OXO.data.IsTest==true){
-    //         $Body.removeClass('not-connected').addClass('connected');
-    //         $('.ConnectStatus').html('Local Test').attr("disabled", true).removeClass('bg-success').addClass('bg-info');
-    //         return false;
-    //     };
-
-    //     if(m){
-    //         $Body.removeClass('not-connected').addClass('connected');
-    //         $('.ConnectStatus').html('Disconnect').attr("disabled", false).removeClass('bg-danger').addClass('bg-success')
-
-    //         if(typeof web3 == "undefined"){
-    //             connect();
-    //         };
-    //     }else{
-    //         $('.ConnectStatus').html('Connect Wallet').attr("disabled", true).removeClass('bg-success').addClass('bg-danger');
-    //     }
-    // };
-    // toggleConnection();
 
     // $("#tokenInfo").hide();
 
@@ -917,7 +801,7 @@ $(document).ready(function() {
     // try {
     //     //web3 = new Web3(new Web3.providers.HttpProvider("https://rpc.testnet.oxochain.com"));
     //     getChainId();
-    //     getBlockNumber();
+    //     $.OXO.request._getBlockNumber();
     // } catch (error) {
     //     alert(error)
     // }
