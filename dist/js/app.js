@@ -244,6 +244,8 @@ $(document).ready(function() {
                     
                     $("#contractaddress").val("0x");
                 }else if(result != "0x"){
+                    $('#contractaddress').removeClass('loading');
+
                     let contractFirst = new web3.eth.Contract(
                         erc20ABI,
                         _contractAddress
@@ -271,6 +273,7 @@ $(document).ready(function() {
                                 $('[data-cms="addToMetaMask"]')
                                     .removeClass('btn-warning').addClass('btn-success')
                                     .attr('disabled', false).attr("data-param",  JSON.stringify($AddTokenData) );
+                                
                                 console.log('$AddTokenData: ', $AddTokenData);
                             });
                         });
