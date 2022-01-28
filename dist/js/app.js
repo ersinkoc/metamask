@@ -66,6 +66,9 @@ $(document).ready(function() {
             stakeTokenABI   = file2Result[0];
             console.log('StakeToken.json Loaded!');
         });
+
+        console.log('erc20ABI', erc20ABI)
+        console.log('StakeToken', stakeTokenABI)
     }
 
     /*
@@ -223,7 +226,10 @@ $(document).ready(function() {
 
         $('#TokenResults i').html('...');
         
-        $('[data-cms="addToMetaMask"]').attr('disabled', true);
+        $('[data-cms="addToMetaMask"]').attr({
+            'disabled'      : true,
+            'data-param'    : '{}'
+        });
         // $("#getName").html("");
         // $("#getSymbol").html("");
         // $("#getDecimals").html("");
@@ -235,9 +241,9 @@ $(document).ready(function() {
             web3.eth.getCode(_contractAddress).then(function(result) {
                 if (result == "0x") {
                     Swal.fire({
-                      title: 'Oooppsy',
-                      text: 'This is not a contract Address...',
-                      icon: 'error'
+                        title: 'Oooppsy',
+                        text: 'This is not a contract Address...',
+                        icon: 'error'
                     });
                     
                     $("#contractaddress").val("0x");
