@@ -92,10 +92,11 @@ $(document).ready(function() {
         };
 
         chainId = cId;
-        SetNetworkInfo();
+        
+        SetNetworkInfo('handleChainChanged');
     };
-    function SetNetworkInfo(){
-        console.log('chainId: ', chainId);
+    function SetNetworkInfo(fName){
+        console.log('chainId: ', fName, chainId);
 
         if (NetworkInfo[chainId] !== 'undefined') {
             let $ChainData = NetworkInfo[chainId];
@@ -186,7 +187,6 @@ $(document).ready(function() {
         });
 
         toggleConnection();
-        SetNetworkInfo();
     };
 
     /*
@@ -241,6 +241,9 @@ $(document).ready(function() {
         } else {
             $("#networkid").html(chainId + " (Unknown Network)");
         }
+
+        SetNetworkInfo('connect');
+        
         return chainId;
     };
 
