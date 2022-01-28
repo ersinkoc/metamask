@@ -375,7 +375,7 @@ $(document).ready(function() {
                 // $("#enableMetamask").html(currentAccount);
                 
                 getBalance(currentAccount).then(function(result) {
-
+                    $('#wallet_id').html( currentAccount );
                     $('#wallet_balance').html( ConvertWei(result) );
                 });
                 
