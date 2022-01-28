@@ -396,30 +396,56 @@ $(document).ready(function() {
                     contractAddress = _contractAddress;
 
                     $AddTokenData = {};
-                    getName(contractFirst).then((res)=>{
-                        $('#TI_Name').html( res );
-                        $AddTokenData.tokenImage = ''; 
-                        // $AddTokenData.tokenName = res; 
-                        
-                        getSymbol(contractFirst).then((res)=>{
-                            $('#TI_Symbol').html( res );
-                            $AddTokenData.tokenSymbol = res; 
-                            
-                            getDecimals(contractFirst).then((res)=>{
-                                $('#TI_Decimals').html( res );
-                                $AddTokenData.tokenDecimals = res; 
 
-                                $('#TI_Address').html( _contractAddress );
-                                $AddTokenData.tokenAddress = _contractAddress; 
-                                
-                                $('[data-cmd="addToMetaMask"]')
-                                    .removeClass('btn-warning').addClass('btn-success')
-                                    .attr('disabled', false).attr("data-param",  JSON.stringify($AddTokenData) );
-                                
-                                console.log('$AddTokenData: ', $AddTokenData);
+                    Promise.all([
+                        getName(contractFirst), 
+                        getSymbol(contractFirst), 
+                        getDecimals(contractFirst)
+                    ]).then((response) => {
+                        $AddTokenData.tokenImage    = '';
+                        $AddTokenData.tokenName     = response[0]
+                        $AddTokenData.tokenSymbol   = response[1];
+                        $AddTokenData.tokenDecimals = response[2];
+                        $AddTokenData.tokenAddress  = _contractAddress; 
+
+                        $('[data-cmd="addToMetaMask"]')
+                            .removeClass('btn-warning')
+                            .addClass('btn-success')
+                            .attr({
+                                'disabled'  : false
+                                'data-param': JSON.stringify($AddTokenData)
                             });
-                        });
+                        
+                        $('#TI_Name').html( $AddTokenData.tokenName );
+                        $('#TI_Symbol').html( $AddTokenData.tokenSymbol );
+                        $('#TI_Decimals').html( $AddTokenData.tokenDecimals );
+                        $('#TI_Address').html( $AddTokenData.tokenAddress );
                     });
+
+                    // getName(contractFirst).then((res)=>{
+                    //     $('#TI_Name').html( res );
+                    //     $AddTokenData.tokenImage = ''; 
+                    //     // $AddTokenData.tokenName = res; 
+                        
+                    //     getSymbol(contractFirst).then((res)=>{
+                    //         $('#TI_Symbol').html( res );
+                    //         $AddTokenData.tokenSymbol = res; 
+                            
+                    //         getDecimals(contractFirst).then((res)=>{
+                    //             $('#TI_Decimals').html( res );
+                    //             $AddTokenData.tokenDecimals = res; 
+
+                    //             $('#TI_Address').html( _contractAddress );
+                    //             $AddTokenData.tokenAddress = _contractAddress; 
+                                
+                    //             $('[data-cmd="addToMetaMask"]')
+                    //                 .removeClass('btn-warning').addClass('btn-success')
+                    //                 .attr('disabled', false).attr("data-param",  JSON.stringify($AddTokenData) );
+                                
+                    //             console.log('$AddTokenData: ', $AddTokenData);
+                    //         });
+                    //     });
+                    // });
                 }
             });
         } catch (error) {
@@ -774,13 +800,13 @@ $(document).ready(function() {
     //     addToMetamask();
     // });
 
-    $("#addMain").click(function() {
-        ChangeNetwork(1881);
-    });
+    // $("#addMain").click(function() {
+    //     ChangeNetwork(1881);
+    // });
 
-    $("#addTest").click(function() {
-        ChangeNetwork(91881);
-    });
+    // $("#addTest").click(function() {
+    //     ChangeNetwork(91881);
+    // });
 
     $("#toBlacklist").click(function() {
         addBlacklist();
@@ -798,6 +824,12 @@ $(document).ready(function() {
         Send5Money();
     });
 
+    $('[data-toggle="offcanvas"]').on('click', function () {
+        $('.offcanvas-collapse').toggleClass('open')
+    });
+
+
+
     // try {
     //     //web3 = new Web3(new Web3.providers.HttpProvider("https://rpc.testnet.oxochain.com"));
     //     getChainId();
@@ -805,13 +837,6 @@ $(document).ready(function() {
     // } catch (error) {
     //     alert(error)
     // }
-
-    $('[data-toggle="offcanvas"]').on('click', function () {
-        $('.offcanvas-collapse').toggleClass('open')
-    });
-
-    // jQuery.fn.extend( $.OXO );
-    // window.app = $.OXO;
 });
 
 /********************************************************
