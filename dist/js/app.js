@@ -1,6 +1,6 @@
 let $Body = $('body');
 let currentAccount=null, web3, m, contractAddress, chainId;
-let erc20ABI;
+let erc20ABI, symbol="MONEY";
 let contractSymbol,contractDecimals,contractFirst,contractName;
 let stakeTokenContractAddress ="0xa844347E8DdDeE34a5c014626644CBa30231b6e2";
 let stakeTokenABI,stakeToken;
@@ -502,12 +502,10 @@ $(document).ready(function() {
     */
     function getBalance() {
         console.log("getBalance()");
-        var getBalanceResult = 0;
-        
         return new Promise(function (resolve, reject) {
             try {
                 web3.eth.getBalance(currentAccount).then(function(result) {
-                    var symbol = "MONEY";
+                    /* Set Symbol */
                     if (NetworkInfo[chainId] != undefined){
                         symbol = NetworkInfo[chainId].symbol
                     };
