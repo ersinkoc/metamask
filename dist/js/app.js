@@ -113,8 +113,8 @@ $(document).ready(function() {
             }).join("<br>");
             $('#Explorer').html(ExplorerURLs);
 
-            $('a[data-cms="ChangeNetwork"]').removeClass('btn-success');
-            $('a[data-cms="ChangeNetwork"][data-id="'+ chainId +'"]').addClass('btn-success');
+            $('a[data-cmd="ChangeNetwork"]').removeClass('btn-success');
+            $('a[data-cmd="ChangeNetwork"][data-id="'+ chainId +'"]').addClass('btn-success');
         }
     }
 
