@@ -724,6 +724,7 @@ $(document).ready(function() {
 
                 $.OXO.request._getTokenInfo( $("#contractaddress").val().trim() )
                     .then(function(response){
+                        console.log('_getTokenInfo response: ', response);
                         $('#contractaddress').removeClass('loading');
 
                         $('[data-cmd="addToMetaMask"]')
