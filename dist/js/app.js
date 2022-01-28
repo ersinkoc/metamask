@@ -168,7 +168,7 @@ $(document).ready(function() {
             /*--------------------------------------------------
 
             --------------------------------------------------*/
-            toggleConnection: function(){
+            toggleConnection: await function(){
                 console.log("OXO.tools.toggleConnection()");
                 
                 if($.OXO.data.IsTest == true){
