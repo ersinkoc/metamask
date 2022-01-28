@@ -86,9 +86,28 @@ $(document).ready(function() {
         console.log("handleChainChanged(" + chain + ")");
         cId = parseInt(chain, 16);
 
-        if (chainId !== cId) window.location.reload();
+        if (chainId !== cId){
+            window.location.reload()
+            return false;
+        };
 
         chainId = cId;
+
+        if (NetworkInfo[chainId] != undefined) {
+            let $ChainData = NetworkInfo[chainId];
+
+            $('#ChainName').html( $ChainData.chainName );
+            $('#ChainId').html( $ChainData.chainId );
+            $('#TokenName').html( $ChainData.name );
+            $('#TokenSymbol').html( $ChainData.symbol );
+            $('#TokenDecimal').html( $ChainData.decimals );
+            $('#RpcUrl').html( $ChainData.rpcUrls );
+
+            var ExplorerURLs = Object.keys(NetworkInfo[chainId].rpcUrls).map(function(k) { 
+                return '<a href="'+ NetworkInfo[chainId].rpcUrls[k] +'" target="_blank" class="btn btn-sm btn-primary">'+ NetworkInfo[chainId].rpcUrls[k]  +'</a>'
+            }).join("<br>");
+            $('#Explorer').html(ExplorerURLs);
+        }
     };
 
     /*

@@ -77,8 +77,8 @@
 		            <span class="badge badge-pill bg-light align-text-bottom">27</span>
 		        </a> -->
 		        <a class="nav-link" data-toggle="tab" href="#wallet">Wallet</a>
+		        <a class="nav-link" data-toggle="tab" href="#stake">Stake</a>
 		        <a class="nav-link" data-toggle="tab" href="#token_information">Token Information</a>
-		        <a class="nav-link" href="#">Link</a>
 		        <a class="nav-link" href="#">Link</a>
 		        <a class="nav-link" href="#">Link</a>
 		        <a class="nav-link" href="#">Link</a>
@@ -104,9 +104,32 @@
 								</div>
 								<div class="mb-3 p-3 bg-white rounded box-shadow">
 									<h6 class="border-bottom border-gray pb-2 mb-0">Lorem Ipsum Dolor Sit Amet</h6>
-									<div class="media text-muted pt-3">
-									    <img src="dist/img/oxo-logo.png" alt="" class="mr-2 rounded">
-									    <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray"><strong class="d-block text-gray-dark">@username</strong> Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+									<div class="row">
+										<div class="col-lg-6 col-sm-12">
+											<h6 class="border-bottom border-gray pb-2 mb-3">Chain Information</h6>
+											<dl class="row mb-3" id="TokenResults">
+												<dt class="col-sm-4">Chain Name</dt>
+												<dd class="col-sm-8"><i id="ChainName"></i></dd>
+												<dt class="col-sm-4">Chain ID</dt>
+												<dd class="col-sm-8"><i id="ChainId"></i></dd>
+												<dt class="col-sm-4">Token Name</dt>
+												<dd class="col-sm-8"><i id="TokenName"></i></dd>
+												<dt class="col-sm-4">Token Symbol</dt>
+												<dd class="col-sm-8"><i id="TokenSymbol"></i></dd>
+												<dt class="col-sm-4">Token Decimal</dt>
+												<dd class="col-sm-8"><i id="TokenDecimal"></i></dd>
+												<dt class="col-sm-4">RPC URL</dt>
+												<dd class="col-sm-8"><i id="RpcUrl"></i></dd>
+												<dt class="col-sm-4">Explorer</dt>
+												<dd class="col-sm-8"><i id="Explorer"></i></dd>
+											</dl>
+										</div>
+										<div class="col-lg-6 col-sm-12">
+											<h6 class="border-bottom border-gray pb-2 mb-3">Token Actions</h6>
+											<a href="#" data-cmd="addToMetaMask" data-param='{}' class="btn btn-warning" disabled="disabled">
+												<span id="btnToken">Add Token to Metamask</span>
+											</a>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -214,6 +237,25 @@
 							<!-- card -->
 						</div>
 						<!-- TAB: Token Information -->
+						<!-- TAB: aaaaa -->
+						<div class="tab-pane fade" id="stake" role="tabpanel" aria-labelledby="nav-contact-tab">
+							<!-- card -->
+							<div class="card-block">
+								<div class="d-flex align-items-center p-3 mt-3 text-white-50 bg-purple rounded box-shadow">
+									<img class="mr-3 img-fluid" src="dist/img/oxo-logo.png" alt="" width="48" height="48">
+									<div class="lh-100">
+										<h6 class="mb-0 text-white lh-100">Stake OXO</h6>
+										<small>The most advantageous earnings for OXO Token</small>
+									</div>
+								</div>
+								<div class="mb-3 p-3 bg-white rounded box-shadow">
+									<h6 class="border-bottom border-gray pb-2 mb-0">Lorem Ipsum Dolor Sit Amet</h6>
+	
+								</div>
+							</div>
+							<!-- card -->
+						</div>
+						<!-- TAB: aaaaa -->
 						<!-- TAB: aaaaa -->
 						<div class="tab-pane fade" id="xxxxxx" role="tabpanel" aria-labelledby="nav-contact-tab">
 
