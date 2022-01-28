@@ -132,7 +132,12 @@ $(document).ready(function() {
             //getChainId();
             //getBlockNumber();
         } catch (error) {
-            alert(error);
+            Swal.fire({
+              title: 'Ethereum Error',
+              text: error,
+              icon: 'error'
+            });
+            // alert(error);
             return false
         }
 
@@ -227,7 +232,7 @@ $(document).ready(function() {
 
         $('#TokenResults i').html('...');
         
-        $('[data-cms="addToMetaMask"]').attr({
+        $('[data-cmd="addToMetaMask"]').attr({
             'disabled'      : true,
             'data-param'    : '{}'
         })
@@ -271,7 +276,7 @@ $(document).ready(function() {
                                 $('#TI_Address').html( _contractAddress );
                                 $AddTokenData.tokenAddress = _contractAddress; 
                                 
-                                $('[data-cms="addToMetaMask"]')
+                                $('[data-cmd="addToMetaMask"]')
                                     .removeClass('btn-warning').addClass('btn-success')
                                     .attr('disabled', false).attr("data-param",  JSON.stringify($AddTokenData) );
                                 
@@ -500,7 +505,7 @@ $(document).ready(function() {
             });
 
             if (wasAdded) {
-                $('[data-cms="addToMetaMask"]').html('Token Added To MetaMask');
+                $('[data-cmd="addToMetaMask"]').html('Token Added To MetaMask');
 
                 Swal.fire({
                   title     : 'Success',
