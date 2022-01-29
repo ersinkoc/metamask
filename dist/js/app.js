@@ -237,9 +237,11 @@ $(document).ready(function() {
 
                 return new Promise(function (resolve, reject) {
                     if (typeof window.ethereum !== "undefined") {
+                        ethereum.on("connect", handleConnect);
                         ethereum.on("accountsChanged", handleAccountsChanged);
                         ethereum.on("chainChanged", handleChainChanged);
                         ethereum.on("disconnet", handleDisconnect);
+                        ethereum.on("message", handleMessage);
                         console.log('detectMetaMask ethereum: ', ethereum);
                         
                         $.OXO.data.IsMetaMask = true;
@@ -349,6 +351,22 @@ $(document).ready(function() {
     function handleDisconnect() {
         console.log("handleDisconnect()");
         window.location.reload();
+    };
+
+    /*
+        
+    */
+    function handleConnect(_chainId) {
+        console.log("handleConnect(" + _chainId + ")");
+
+    };
+
+    /*
+        
+    */
+    function handleMessage(_chainId) {
+        console.log("handleMessage('" + _chainId.type + "', " + _chainId.data + ")");
+
     };
 
     /*
