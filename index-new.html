@@ -11,7 +11,7 @@
 	<!-- Stylesheet -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css" integrity="sha512-T584yQ/tdRR5QwOpfvDfVQUidzfgc2339Lc8uBDtcp/wYu80d7jwBgAxbyMh0a9YM9F8N3tdErpFI8iaGx6x5g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-	<link rel="stylesheet" href="dist/css/app.css?v=29012022_2" />
+	<link rel="stylesheet" href="dist/css/app.css?v=29012022_3" />
 	<!-- Stylesheet -->
 </head>
 <body class="bg-light not-connected transition">
@@ -123,8 +123,7 @@
 											<h4 class="block-number" data-blocknumber>0</h4>
 
 											<h6 class="border-bottom border-gray pb-2 mb-3">Networks</h6>
-											<div id="NetworkList" class="list-group">
-											</div>
+											<div id="NetworkList" class="list-group"></div>
 
 										</div>
 									</div>
@@ -166,7 +165,7 @@
 													</div>
 
 													<div class="btn-group btn-block mt-3">
-														<a href="" class="btn btn-purple-outline">
+														<a href="$" data-toggle="modal" data-target="#SendModal" class="btn btn-purple-outline">
 															<i class="fas fa-arrow-alt-circle-up"></i>
 															Send <span data-token-symbol>**</span>
 														</a>
@@ -381,12 +380,49 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.9/clipboard.min.js"></script>
 		
 		<script defer src="dist/js/qrious.js"></script>
-		<script defer src="dist/js/app.js?v=29012022_2"></script>
+		<script defer src="dist/js/maskmoney.js"></script>
+		<script defer src="dist/js/app.js?v=29012022_3"></script>
 		<!-- Script -->
 	</div>
 	<!-- MASTER APP -->
 
-	<!-- Get QR -->
+	<!-- Send Money -->
+	<div class="modal fade" id="SendModal" tabindex="-1" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title">Send <span data-token-symbol>**</span></h5>
+	                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	                    <span aria-hidden="true">&times;</span>
+	                </button>
+	            </div>
+	            <div class="modal-body">
+	            	<form>
+	            		<div class="form-group">
+	            			<label>Address</label>
+	            			<input type="text" id="sendToAddress" value="0x461Ebc8b80f0035e6Bb304f823dA58B8a1BF3c9D" placeholder="0x" class="form-control" />
+	            		</div>
+	            		<div class="form-group">
+	            			<label>Value</label>
+	            			<div class="input-group">
+	            				<input type="text" id="sendToVal" data-maskmoney value="1.234" class="form-control text-right" />
+	            				<div class="input-group-append">
+	            					<span class="input-group-text" data-token-symbol>**</span>
+	            				</div>
+	            			</div>
+	            		</div>
+	            	</form>
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+	                <button type="button" class="btn btn-primary" data-cmd="Send" data-param='{}'>Send</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- Send Money -->
+
+	<!-- Receive Money -->
 	<div class="modal fade" id="QRModal" tabindex="-1" aria-hidden="true">
 	    <div class="modal-dialog">
 	        <div class="modal-content">
@@ -410,7 +446,7 @@
 	        </div>
 	    </div>
 	</div>
-	<!-- Get QR -->
+	<!-- Receive Money -->
 
 	<!-- Wallet Connections -->
 	<div class="modal fade" id="WalletConnectionModal" tabindex="-1" aria-hidden="true">

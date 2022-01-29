@@ -12,7 +12,7 @@ $(document).ready(function() {
 
     /*
         OXO.App
-        $.OXO.data.NetworkInfo
+        $.OXO.data.tokenDecimal
     */
     $.OXO = {
         /* ########################
@@ -40,7 +40,8 @@ $(document).ready(function() {
             LastBlockNumber : null,
             CurrentSymbol   : 'MONEY',
             TokenUSDPrice   : 0.025,
-            NetworkInfo     : []
+            NetworkInfo     : [],
+            tokenDecimal    : 8
         },
         /* ########################
             APP INITIALIZE
@@ -96,6 +97,13 @@ $(document).ready(function() {
                     }, 10000);
                 };
 
+                $('[data-maskmoney]').maskMoney({ 
+                    thousands   : '', 
+                    decimal     : '.', 
+                    allowZero   : true,
+                    precision   : $.OXO.data.tokenDecimal
+                });
+
                 /* Pre-Defined Network List */
                 $( Object.entries( $.OXO.data.NetworkInfo ) ).each(function(index, el) {
                     let $netData = el[1];
@@ -146,6 +154,32 @@ $(document).ready(function() {
             REQUEST
         ######################## */
         request:{
+            /*--------------------------------------------------
+                OXO: Get Block Number
+            --------------------------------------------------*/
+            _send: async function($obj) {
+                try {
+                    $.OXO.tools.loader('show');
+                    $.OXO.Web3.eth.sendTransaction($obj).then(function (result){
+                        $.OXO.tools.loader('hide');
+                        console.log('sendTransaction Result: ', result);
+
+                        $.OXO.tools.success('Your transaction has been sent to the network. TX:'+ result.transactionHash +'');
+                    }).catch((err) => {
+                        console.log('sendTransaction Catch', err);
+                        if(err.code === 4001){
+                            $.OXO.tools.error('You have not confirmed the operation on MetaMask.');
+                            return false
+                        }
+                    })
+                } catch (error) {
+                    console.log("Error: " + error);
+                    $.OXO.tools.error('There was a problem with the network and your transaction could not be processed.');
+                }
+            },
+            /*--------------------------------------------------
+                OXO: Get Block Number
+            --------------------------------------------------*/
             _getChainId: async function() {
                 console.log("$.OXO.request._getChainId("+ $.OXO.data.chainId +")");
                 // console.log("getChainId()");
@@ -153,9 +187,7 @@ $(document).ready(function() {
                 $.OXO.data.chainId = await window.ethereum.networkVersion; // From Metamask
 
                 if ( $.OXO.data.NetworkInfo[$.OXO.data.chainId] != undefined) {
-                    $("#networkid").html(
-                        $.OXO.data.chainId + " (" + $.OXO.data.NetworkInfo[$.OXO.data.chainId].chainName + ")"
-                    );
+                    $("#networkid").html( $.OXO.data.chainId + " (" + $.OXO.data.NetworkInfo[$.OXO.data.chainId].chainName + ")");
                 } else {
                     $("#networkid").html($.OXO.data.chainId + " (Unknown Network)");
                 }
@@ -311,6 +343,19 @@ $(document).ready(function() {
 
                     $.OXO.data.LastBlockNumber = parseInt(response);
                 });
+            },
+            /*--------------------------------------------------
+
+            --------------------------------------------------*/
+            loader   : function(Cmd='show'){ 
+                if(Cmd=='hide'){
+                    Swal.hideLoading();
+                }else{
+                    Swal.fire({
+                        title: 'warning', 
+                        text: 'Please wait...', icon: 'warning', allowOutsideClick:false, allowEscapeKey:false, showCancelButton:false, showDenyButton:false, showConfirmButton:false }); 
+                    Swal.showLoading();
+                }
             },
             /*--------------------------------------------------
 
@@ -497,7 +542,7 @@ $(document).ready(function() {
         
     */
     function handleMessage(_chainId) {
-        console.log("handleMessage('" + _chainId.type + "', " + _chainId.data + ")");
+        console.log("handleMessage('" + _chainId.type + "') ==> ", _chainId.data);
 
     };
 
@@ -550,7 +595,8 @@ $(document).ready(function() {
     function handleAccountsChanged(accounts) {
         console.log("handleAccountsChanged(" + accounts + ")");
         if( $.OXO.data.NetworkInfo[$.OXO.data.chainId] != undefined){
-            $.OXO.data.CurrentSymbol = $.OXO.data.NetworkInfo[$.OXO.data.chainId].symbol
+            $.OXO.data.CurrentSymbol = $.OXO.data.NetworkInfo[$.OXO.data.chainId].symbol;
+            $.OXO.data.tokenDecimal  = $.OXO.data.NetworkInfo[$.OXO.data.chainId].decimals;
         }
 
         $('[data-token-symbol]').html( $.OXO.data.CurrentSymbol );
@@ -583,7 +629,6 @@ $(document).ready(function() {
                 $.OXO.request._getChainId();
                 $.OXO.tools.UpdateBlockNumber();
             }
-
         }
         console.log(
             "WalletAddress in HandleAccountChanged [" + $.OXO.data.currentAccount + "]"
@@ -671,24 +716,6 @@ $(document).ready(function() {
                 reject(error);
             }
         });
-    };
-
-    /*
-        
-    */
-    async function Send5Money() {
-        try {
-            let value = $.OXO.Web3.utils.toWei('5', 'ether');
-            $.OXO.Web3.eth.sendTransaction({ 
-                to      : '0xd7cE0CdacCaaDd386d7873b09797748715AA3572', 
-                from    : $.OXO.Web3.eth.givenProvider.selectedAddress, 
-                value   : value 
-            }).then(function(result) {
-                console.log(result);
-            });
-        } catch (error) {
-            console.log("Error: " + error);
-        }
     };
 
     /*
@@ -878,8 +905,33 @@ $(document).ready(function() {
         console.log('Param: ', $Data)
 
         switch($Command) {
+            case 'Send':
+                Swal.fire({
+                    title               : 'Are you sure?',
+                    text                : "You won't be able to revert this!",
+                    icon                : 'warning',
+                    showCancelButton    : true,
+                    confirmButtonColor  : '#3085d6',
+                    cancelButtonColor   : '#d33',
+                    confirmButtonText   : 'Yes'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.OXO.request._send({
+                            from    : $.OXO.Web3.eth.givenProvider.selectedAddress,
+                            to      : $('#sendToAddress').val().trim(), 
+                            value   : $.OXO.Web3.utils.toWei( $('#sendToVal').val().trim(), 'ether')
+                        }).then(function(result) {
+
+                        }).catch((err) => {
+                            console.error('Send: ', err);
+                        });
+                    }
+                });
+                
+                break;
             case 'Receive': 
                 $.OXO.tools._generateQR( $.OXO.data.currentAccount );
+                
                 break;
             case 'generateWallet':
                 $.OXO.GenerateWallet().then(function(result) {
@@ -887,11 +939,10 @@ $(document).ready(function() {
                     $('#NewWalletPKey').val( result.privateKey );
 
                     $.OXO.tools.Toast().fire({ icon: 'success', title: 'Wallet Created!' });
-                })
-                .catch((err) => {
+                }).catch((err) => {
                     console.error(err);
-                    return false
                 });
+
                 break;
             case 'ConnectMetaMask':
                 $.OXO.connect();
