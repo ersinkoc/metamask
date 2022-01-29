@@ -11,7 +11,7 @@
 	<!-- Stylesheet -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css" integrity="sha512-T584yQ/tdRR5QwOpfvDfVQUidzfgc2339Lc8uBDtcp/wYu80d7jwBgAxbyMh0a9YM9F8N3tdErpFI8iaGx6x5g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-	<link rel="stylesheet" href="dist/css/app.css?v=17" />
+	<link rel="stylesheet" href="dist/css/app.css" />
 	<!-- Stylesheet -->
 </head>
 <body class="bg-light not-connected transition">
@@ -55,14 +55,18 @@
 		            </li>
 		        </ul>
 		        <form class="form-inline my-2 my-lg-0">
-					<div class="input-group">
+		        	<a href="#" class="btn btn-sm bg-white">
+		        		<i class="fas fa-wallet"></i> 
+		        		<span class="copy" data-walletid data-clipboard-text="" data-toggle="tooltip" data-placement="top" title="Click to copy Wallet ID"></span>
+		        	</a>
+<!-- 					<div class="input-group">
 						<input type="text" class="form-control form-control-sm" placeholder="Search in BC" aria-label="Search in BC" aria-describedby="button-addon2">
 						<div class="input-group-append">
 							<button class="btn btn-sm btn-primary" type="button" id="button-addon2">
 								<i class="fab fa-searchengin"></i>
 							</button>
 						</div>
-					</div>
+					</div> -->
 		        </form>
 		    </div>
 		</nav>
@@ -97,8 +101,7 @@
 							<!-- card -->
 							<div class="card-block">
 								<div class="d-flex align-items-center p-3 mt-3 text-white-50 bg-purple rounded box-shadow">
-									<img class="mr-3 img-fluid" src="dist/img/oxo-white.svg" alt="" />
-									<div class="lh-100">
+									<div class="card-header lh-100">
 										<h6 class="mb-0 text-white lh-100">Dashboard</h6>
 										<small>OXO Chain Since 2020</small>
 									</div>
@@ -133,7 +136,7 @@
 											</div>
 											
 											<h6 class="border-bottom border-gray pb-2 mt-3 mb-3">Last Block Number</h6>
-											<h4 id="LatesBlockNumber"></h4>
+											<h4 class="block-number" data-blocknumber>0</h4>
 										</div>
 									</div>
 								</div>
@@ -144,35 +147,83 @@
 						<!-- TAB: Wallet -->
 						<div class="tab-pane fade" id="wallet" role="tabpanel" aria-labelledby="nav-profile-tab">
 							<div class="row">
-								<div class="col-lg-6 col-sm-12">
+								<div class="col-lg-12 col-sm-12">
 									<!-- card -->
 									<div class="card-block">
 										<div class="d-flex align-items-center p-3 mt-3 text-white-50 bg-purple rounded box-shadow">
-											<img class="mr-3 img-fluid" src="dist/img/oxo-white.svg" alt="" />
-											<div class="lh-100">
-												<h6 class="mb-0 text-white lh-100">OXO Wallet</h6>
+											<div class="card-header lh-100">
+												<h6 class="mb-0 text-white lh-100"><span data-token-symbol></span></h6>
 											</div>
 										</div>
 										<div class="mb-3 p-3 bg-white rounded box-shadow">
-											<div class="lh-100">
+											<div class="row">
+												<div class="col-lg-4 col-sm-12">
+													<!-- Widget -->
+													<div class="widget-block">
+														<div class="widget-header">
+															Your <span data-token-symbol></span> Balance 
+															<small>1 <span data-token-symbol>**</span> = <span data-usd-price>**</span></small>
+														</div>
+														<div class="widget-body">
+															<div class="prices">
+																<h4 data-wallet-balance class="float-left"></h4>
+																<h3 data-wallet-usd-balance class="float-left">$0.00</h3>
+																<div class="clearfix"></div>
+															</div>
+															<div class="wallet-id">
+																<h1 class="copy" data-walletid data-clipboard-text="" data-toggle="tooltip" data-placement="top" title="Click to copy Wallet ID">...</h1>
+															</div>
+														</div>
+													</div>
+
+													<div class="btn-group btn-block mt-3">
+														<a href="" class="btn btn-purple-outline">
+															<i class="fas fa-arrow-alt-circle-up"></i>
+															Send <span data-token-symbol>**</span>
+														</a>
+														<a href="" class="btn btn-purple-outline">
+															<i class="fas fa-arrow-alt-circle-down"></i>
+															Receive <span data-token-symbol>**</span>
+														</a>
+													</div>
+													<!-- Widget -->
+												</div>
+												<div class="col-lg-8 col-sm-12">
+													<!-- Widget -->
+													<div class="widget-block">
+														<div class="widget-header">
+															Latest Transactions
+														</div>
+														<div class="widget-body">
+															<ul id="LatestTransactions">
+																<li>lorem ipsum dolor 1</li>
+																<li>lorem ipsum dolor 2</li>
+																<li>lorem ipsum dolor 3</li>
+																<li>lorem ipsum dolor 4</li>
+															</ul>
+														</div>
+													</div>
+													<!-- Widget -->
+												</div>
+											</div>
+<!-- 											<div class="lh-100">
 												<h6 class="mb-0 lh-100">Wallet ID</h6>
 											</div>
-											<h1 id="wallet_id">...</h1>
+											<h1 class="copy" data-walletid data-clipboard-text="">...</h1>
 
 											<div class="lh-100">
 												<h6 class="mb-0 lh-100">Current Balance</h6>
 											</div>
-											<h1 id="wallet_balance">...</h1>
+											<h1 data-wallet-balance>...</h1> -->
 										</div>
 									</div>
 									<!-- card -->
 								</div>
-								<div class="col-lg-6 col-sm-12">
+								<div class="col-lg-12 col-sm-12">
 									<!-- card -->
 									<div class="card-block">
 										<div class="d-flex align-items-center p-3 mt-3 text-white-50 bg-purple rounded box-shadow">
-											<img class="mr-3 img-fluid" src="dist/img/oxo-white.svg" alt="" />
-											<div class="lh-100">
+											<div class="card-header lh-100">
 												<h6 class="mb-0 text-white lh-100">Latest Transactions</h6>
 											</div>
 										</div>
@@ -193,8 +244,7 @@
 							<!-- card -->
 							<div class="card-block">
 								<div class="d-flex align-items-center p-3 mt-3 text-white-50 bg-purple rounded box-shadow">
-									<img class="mr-3 img-fluid" src="dist/img/oxo-white.svg" alt="" />
-									<div class="lh-100">
+									<div class="card-header lh-100">
 										<h6 class="mb-0 text-white lh-100">Token Information</h6>
 										<small>OXO Chain Tokens</small>
 									</div>
@@ -249,21 +299,27 @@
 						<!-- TAB: Token Information -->
 						<!-- TAB: aaaaa -->
 						<div class="tab-pane fade" id="stake" role="tabpanel" aria-labelledby="nav-contact-tab">
-							<!-- card -->
-							<div class="card-block">
-								<div class="d-flex align-items-center p-3 mt-3 text-white-50 bg-purple rounded box-shadow">
-									<img class="mr-3 img-fluid" src="dist/img/oxo-white.svg" alt="" />
-									<div class="lh-100">
-										<h6 class="mb-0 text-white lh-100">Stake OXO</h6>
-										<small>The most advantageous earnings for OXO Token</small>
+							<div class="row">
+								<div class="col-lg-7 col-sm-12">
+									<!-- card -->
+									<div class="card-block">
+										<div class="d-flex align-items-center p-3 mt-3 text-white-50 bg-purple rounded box-shadow">
+											<div class="card-header lh-100">
+												<h6 class="mb-0 text-white lh-100">Stake OXO</h6>
+												<small>The most advantageous earnings for OXO Token</small>
+											</div>
+										</div>
+										<div class="mb-3 p-3 bg-white rounded box-shadow">
+											<h6 class="border-bottom border-gray pb-2 mb-0">Lorem Ipsum Dolor Sit Amet</h6>
+			
+										</div>
 									</div>
+									<!-- card -->
 								</div>
-								<div class="mb-3 p-3 bg-white rounded box-shadow">
-									<h6 class="border-bottom border-gray pb-2 mb-0">Lorem Ipsum Dolor Sit Amet</h6>
-	
+								<div class="col-lg-5 col-sm-12">
+									
 								</div>
 							</div>
-							<!-- card -->
 						</div>
 						<!-- TAB: aaaaa -->
 						<!-- TAB: aaaaa -->
@@ -280,11 +336,14 @@
 		<!-- Script -->
 		<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 		<script src="https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.2/umd/popper.min.js" integrity="sha512-aDciVjp+txtxTJWsp8aRwttA0vR2sJMk/73ZT7ExuEHv7I5E6iyyobpFOlEFkq59mWW8ToYGuVZFnwhwIUisKA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js" integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.10/dist/sweetalert2.all.min.js" integrity="sha256-hw7v8jZF/rFEdx1ZHepT4D73AFTHLu/P9kEyrNesRyc=" crossorigin="anonymous"></script>
-		<script defer src="dist/js/app.js?v=17"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.9/clipboard.min.js"></script>
+		
+		<script defer src="dist/js/app.js"></script>
 		<!-- Script -->
 	</div>
 	<!-- MASTER APP -->

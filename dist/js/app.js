@@ -2,7 +2,6 @@ window.app = {}
 
 let $Body = $('body');
 let chainId;
-let symbol="MONEY";
 let contractSymbol,contractDecimals,contractFirst,contractName;
 
 const NetworkInfo = {
@@ -45,7 +44,7 @@ $(document).ready(function() {
 
     /*
         OXO.App
-        $.OXO.data.CurrentTokenData
+        $.OXO.data.TokenUSDPrice
     */
     $.OXO = {
         /* ########################
@@ -68,7 +67,11 @@ $(document).ready(function() {
             erc20ABI        : {},
             stakeTokenABI   : {},
             stakeToken      : null,
-            CurrentTokenData: {}
+            CurrentTokenData: {},
+            BlockTicker     : null,
+            LastBlockNumber : null,
+            CurrentSymbol   : 'MONEY',
+            TokenUSDPrice   : 0.025
         },
         /* ########################
             APP INITIALIZE
@@ -77,6 +80,19 @@ $(document).ready(function() {
             /*--------------------------------------------------
                 OXO: Init App
             --------------------------------------------------*/
+            $('[data-toggle="tooltip"]').tooltip();
+
+            let clipboard = new ClipboardJS('.copy');
+                clipboard.on('success', function(e) {
+                    $.OXO.tools.Toast().fire({ icon: 'success', title: 'Copied!' });
+                    e.clearSelection();
+                });
+
+                clipboard.on('error', function(e) {
+                    console.error('Action:', e.action);
+                    console.error('Trigger:', e.trigger);
+                });
+
             if($.OXO.data.IsTest==false){
                 $.getJSON("ERC20.json", function (result) {
                     $.OXO.data.erc20ABI = result.abi;
@@ -84,7 +100,13 @@ $(document).ready(function() {
                 $.getJSON("StakeToken.json", function (result) {
                     $.OXO.data.stakeTokenABI = result.abi;
                 });
-            }
+            };
+
+            if( $('[data-blocknumber]') ){
+                $.OXO.data.BlockTicker = setInterval(function(){
+                    $.OXO.tools.UpdateBlockNumber();
+                }, 10000);
+            };
         },
         /* ########################
             OXO STAKE
@@ -122,6 +144,24 @@ $(document).ready(function() {
             REQUEST
         ######################## */
         request:{
+            _getChainId: async function() {
+                console.log("$.OXO.request._getChainId("+ $.OXO.data.chainId +")");
+                // console.log("getChainId()");
+                //chainId = await web3.eth.net.getId() // From web3 rpc
+                $.OXO.data.chainId = await window.ethereum.networkVersion; // From Metamask
+
+                if (NetworkInfo[$.OXO.data.chainId] != undefined) {
+                    $("#networkid").html(
+                        $.OXO.data.chainId + " (" + NetworkInfo[$.OXO.data.chainId].chainName + ")"
+                    );
+                } else {
+                    $("#networkid").html($.OXO.data.chainId + " (Unknown Network)");
+                }
+
+                SetNetworkInfo('connect');
+                
+                return $.OXO.data.chainId;
+            },
             /*--------------------------------------------------
                 OXO: Get Block Number
             --------------------------------------------------*/
@@ -176,9 +216,10 @@ $(document).ready(function() {
                     try {
                         $.OXO.Web3.eth.getBalance(_currentAccount)
                             .then(function(result) {
-                                if (NetworkInfo[chainId] != undefined){
-                                    symbol = NetworkInfo[chainId].symbol
-                                };
+                                // console.log('.getBalance: ', result );
+                                // if (NetworkInfo[$.OXO.data.chainId] != undefined){
+                                //     symbol = NetworkInfo[chainId].symbol
+                                // };
                                 resolve(result)
                             });
                     }catch(error){reject(error)}
@@ -189,6 +230,65 @@ $(document).ready(function() {
             TOOLS
         ######################## */
         tools:{
+            /*--------------------------------------------------
+
+            --------------------------------------------------*/
+            _formatToCurrency: function(amount, Fixed){
+                return "$" + amount.toFixed(Fixed).replace(/\d(?=(\d{3})+\.)/g, "$&,");
+            },
+            /*--------------------------------------------------
+
+            --------------------------------------------------*/
+            _USDPrice: function(Wei){
+                $('[data-usd-price]').html( $.OXO.tools._formatToCurrency($.OXO.data.TokenUSDPrice, 10) );
+
+                return $.OXO.tools._formatToCurrency( $.OXO.tools.ConvertWei(Wei) * $.OXO.data.TokenUSDPrice, 2);
+            },
+            /*--------------------------------------------------
+
+            --------------------------------------------------*/
+            Toast:()=>{
+                return Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+            },
+            /*--------------------------------------------------
+
+            --------------------------------------------------*/
+            UpdateBlockNumber: function(){
+                console.log("$.OXO.tools.UpdateBlockNumber();");
+                
+                $.OXO.request._getBlockNumber().then(function(response){
+                    if($.OXO.data.LastBlockNumber==parseInt(response)){
+                        // console.log('BlockNumber Not change!');
+                        return false;
+                    }
+                    // $("#LatesBlockNumber").html( response );
+                    $('[data-blocknumber]').each(function(index, el) {
+                        let $BlockContainer = $(this);
+                        
+                        $({ Counter: parseInt( $BlockContainer.html() ) }).animate({
+                            Counter: parseInt(response)
+                        },{
+                            duration    : ($.OXO.data.LastBlockNumber==null?1000:2500),
+                            easing      : 'swing',
+                            step        : function() {
+                                $BlockContainer.text(Math.ceil(this.Counter));
+                            }
+                        }); 
+                    });
+
+                    $.OXO.data.LastBlockNumber = parseInt(response);
+                });
+            },
             /*--------------------------------------------------
 
             --------------------------------------------------*/
@@ -215,7 +315,7 @@ $(document).ready(function() {
 
                 if($.OXO.data.IsMetaMask == true){
                     $Body.removeClass('not-connected').addClass('connected');
-                    $('.ConnectStatus').html('Disconnect').attr("disabled", false).removeClass('bg-danger').addClass('bg-success')
+                    $('.ConnectStatus').html('Connected').attr("disabled", false).removeClass('bg-danger').addClass('bg-success')
 
                     if($.OXO.Web3 == null){
                         $.OXO.connect();
@@ -237,14 +337,16 @@ $(document).ready(function() {
 
                 return new Promise(function (resolve, reject) {
                     if (typeof window.ethereum !== "undefined") {
+                        console.log('detectMetaMask ethereum: ', ethereum);
+                        
                         ethereum.on("connect", handleConnect);
                         ethereum.on("accountsChanged", handleAccountsChanged);
                         ethereum.on("chainChanged", handleChainChanged);
                         ethereum.on("disconnet", handleDisconnect);
                         ethereum.on("message", handleMessage);
-                        console.log('detectMetaMask ethereum: ', ethereum);
                         
                         $.OXO.data.IsMetaMask = true;
+                        $.OXO.data.chainId = parseInt(ethereum.chainId, 16);
                         resolve(true);
                     } else {
                         console.log("Metamask is not installed!");
@@ -258,7 +360,7 @@ $(document).ready(function() {
 
             --------------------------------------------------*/
             ConvertWei: function(Val){
-                return $.OXO.Web3.utils.fromWei(Val, "ether") + " " + symbol
+                return $.OXO.Web3.utils.fromWei(Val, "ether");
             }
             /*--------------------------------------------------
             
@@ -271,7 +373,7 @@ $(document).ready(function() {
             try {
                 $.OXO.Web3 = new Web3(window.ethereum);
                 // web3 = new Web3(new Web3.providers.HttpProvider("https://rpc.testnet.oxochain.com"));
-                // getChainId();
+                // $.OXO.request._getChainId();
                 // $.OXO.request._getBlockNumber();
             } catch (error) {
                 $.OXO.tools.error(error);
@@ -291,8 +393,9 @@ $(document).ready(function() {
                 if (err.code === 4001) {
                     // EIP-1193 userRejectedRequest error
                     // If this happens, the user rejected the connection request.
+                    $.OXO.tools.error('You refused to connect Metamask');
                     console.log("Please connect to MetaMask.");
-                    $("#status").html("You refused to connect Metamask");
+                    // $("#status").html("You refused to connect Metamask");
                 } else {
                     console.error(err);
                     return false
@@ -358,6 +461,7 @@ $(document).ready(function() {
     */
     function handleConnect(_chainId) {
         console.log("handleConnect(" + _chainId + ")");
+        // $.OXO.data.chainId = _chainId;
 
     };
 
@@ -413,35 +517,38 @@ $(document).ready(function() {
     */
     function handleAccountsChanged(accounts) {
         console.log("handleAccountsChanged(" + accounts + ")");
-
+        $.OXO.data.CurrentSymbol = NetworkInfo[$.OXO.data.chainId].symbol
+        $('[data-token-symbol]').html( $.OXO.data.CurrentSymbol );
+        
         if (accounts.length === 0) {
-            console.log("Please connect to MetaMask.");
             console.log('handleAccountsChanged 0: ', 'Connect with Metamask');
+            $.OXO.tools.error('Please connect to MetaMask');
             // $("#enableMetamask").html("Connect with Metamask");
-            //$("#balance").html("...");
+            // $("#balance").html("...");
             // $("#networkid").html("...");
         } else if (accounts[0] !== $.OXO.data.currentAccount) {
             $.OXO.data.currentAccount = accounts[0];
             console.log('handleAccountsChanged 1: ', $.OXO.data.currentAccount);
             // $("#enableMetamask").html(currentAccount);
-            $("#status").html("");
+            // $("#status").html("");
             if ($.OXO.data.currentAccount != null) {
                 console.log('handleAccountsChanged 2: ', $.OXO.data.currentAccount);
                 // $("#enableMetamask").html(currentAccount);
                 
                 $.OXO.request._getBalance().then(function(response) {
-                    $('#wallet_id').html( $.OXO.data.currentAccount );
-                    $('#wallet_balance').html( $.OXO.tools.ConvertWei(response) );
+                    $('[data-walletid]').html( $.OXO.data.currentAccount )
+                        .attr('data-clipboard-text', $.OXO.data.currentAccount);
+                    
+                    $('[data-wallet-balance]').html( $.OXO.tools.ConvertWei(response) +' '+ $.OXO.data.CurrentSymbol );
+                    $('[data-wallet-usd-balance]').html( $.OXO.tools._USDPrice(response) );
                 }).catch(function(err){
                     $.OXO.tools.error(err);
                 });
                 
-                getChainId();
-                $.OXO.request._getBlockNumber().then(function(response){
-                    $("#LatesBlockNumber").html( response );
-                });
-
+                $.OXO.request._getChainId();
+                $.OXO.tools.UpdateBlockNumber();
             }
+
         }
         console.log(
             "WalletAddress in HandleAccountChanged [" + $.OXO.data.currentAccount + "]"
@@ -452,24 +559,24 @@ $(document).ready(function() {
     /*
         
     */
-    async function getChainId() {
-        console.log("getChainId()");
-        //chainId = await web3.eth.net.getId() // From web3 rpc
-        $.OXO.data.chainId = await window.ethereum.networkVersion; // From Metamask
-        console.log("Network ID: " + chainId);
+    // async function getChainId() {
+    //     console.log("getChainId()");
+    //     //chainId = await web3.eth.net.getId() // From web3 rpc
+    //     $.OXO.data.chainId = await window.ethereum.networkVersion; // From Metamask
+    //     console.log("Network ID: " + $.OXO.data.chainId);
 
-        if (NetworkInfo[$.OXO.data.chainId] != undefined) {
-            $("#networkid").html(
-                $.OXO.data.chainId + " (" + NetworkInfo[$.OXO.data.chainId].chainName + ")"
-            );
-        } else {
-            $("#networkid").html($.OXO.data.chainId + " (Unknown Network)");
-        }
+    //     if (NetworkInfo[$.OXO.data.chainId] != undefined) {
+    //         $("#networkid").html(
+    //             $.OXO.data.chainId + " (" + NetworkInfo[$.OXO.data.chainId].chainName + ")"
+    //         );
+    //     } else {
+    //         $("#networkid").html($.OXO.data.chainId + " (Unknown Network)");
+    //     }
 
-        SetNetworkInfo('connect');
+    //     SetNetworkInfo('connect');
         
-        return $.OXO.data.chainId;
-    };
+    //     return $.OXO.data.chainId;
+    // };
 
     /*
         

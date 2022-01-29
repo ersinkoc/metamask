@@ -124,14 +124,53 @@ input.loading{
 
 }
 #TokenResults dt{
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 500;
 }
 #TokenResults dd i{
     font-size: 12px;
     font-weight: 400;
     font-style: initial !important;
     display: block;
+}
+/*----------------------------------------------------------------
+	Widget Block
+----------------------------------------------------------------*/
+.widget-block {
+    border: 1px solid #d3d3d3;
+    border-radius: 4px;
+    padding: 0px;
+}
+.widget-block .widget-header{
+	padding:10px 10px 5px 10px;
+    font-weight: 600;
+    font-size: 14px;
+    border-bottom:1px solid #d3d3d3;
+    background-color: #f7f7f7;
+}
+.widget-block .widget-body{
+	padding: 15px 10px;
+}
+.widget-block .widget-body h4 {
+    display: block;
+    font-weight: 600;
+    font-size: 20px;
+}
+.widget-block .widget-body h3 {
+    display: block;
+    font-weight: 500;
+    font-size: 20px;
+    margin-left: 20px;
+    color: #7c7c7c;
+}
+.wallet-id h1{
+    font-size: 12px;
+    display: block;
+    overflow: hidden;
+    color: #6f42c1;
+    font-weight: 400;
+    padding: 5px 0px;
+    text-align: justify;
 }
 /*----------------------------------------------------------------
 	Wallet List
@@ -242,6 +281,89 @@ body.connected.bg-light {
 .nav-link.active {
 	background-color: var(--purple);
 	color:#fff;
+}
+.block-number {
+
+}
+.card-header{
+    background-image: url('../img/oxo-white.svg');
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 40px;
+    padding: 10px 0px 10px 50px;
+}
+.card-block > div:nth-child(1){
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+}
+.card-block > div:nth-child(2){
+	border-top-left-radius: 0px !important;
+	border-top-right-radius: 0px !important;
+}
+
+/*----------------------------------------------------------------
+	OXO Buttons
+----------------------------------------------------------------*/
+.btn-purple { 
+  color: #ffffff; 
+  background-color: #6f42c1; 
+  border-color: #130269; 
+} 
+ 
+.btn-purple:hover, 
+.btn-purple:focus, 
+.btn-purple:active, 
+.btn-purple.active, 
+.open .dropdown-toggle.btn-purple { 
+  color: #ffffff; 
+  background-color: #49247A; 
+  border-color: #130269; 
+} 
+ 
+.btn-purple:active, 
+.btn-purple.active, 
+.open .dropdown-toggle.btn-purple { 
+  background-image: none; 
+}
+
+.btn-purple-outline { 
+  color: #49247A; 
+  background-color: transparent; 
+  border-color: #130269; 
+} 
+ 
+.btn-purple-outline:hover, 
+.btn-purple-outline:focus, 
+.btn-purple-outline:active, 
+.btn-purple-outline.active, 
+.open .dropdown-toggle.btn-purple-outline { 
+  color: #ffffff; 
+  background-color: #49247A; 
+  border-color: #130269; 
+} 
+ 
+.btn-purple.disabled, 
+.btn-purple[disabled], 
+fieldset[disabled] .btn-purple, 
+.btn-purple.disabled:hover, 
+.btn-purple[disabled]:hover, 
+fieldset[disabled] .btn-purple:hover, 
+.btn-purple.disabled:focus, 
+.btn-purple[disabled]:focus, 
+fieldset[disabled] .btn-purple:focus, 
+.btn-purple.disabled:active, 
+.btn-purple[disabled]:active, 
+fieldset[disabled] .btn-purple:active, 
+.btn-purple.disabled.active, 
+.btn-purple[disabled].active, 
+fieldset[disabled] .btn-purple.active { 
+  background-color: #6f42c1; 
+  border-color: #130269; 
+} 
+ 
+.btn-purple .badge { 
+  color: #6f42c1; 
+  background-color: #ffffff; 
 }
 /*----------------------------------------------------------------
 	Media Queries
