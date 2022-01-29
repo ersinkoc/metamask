@@ -283,7 +283,24 @@ body.connected.bg-light {
 	color:#fff;
 }
 .block-number {
-
+	display: block;
+	text-align: center;
+	letter-spacing: 4px;
+	padding: 15px;
+	border: 1px solid #b3b3b3;
+	border-radius: 3px;
+	margin-bottom: 15px;
+	background-color: #6f42c11f;
+	font-family: monospace;
+	font-weight: 500;
+}
+a.list-group-item {
+	cursor: pointer;
+}
+a.list-group-item.active {
+	background-color: var(--purple);
+	color:#fff;
+	border-color:var(--purple);
 }
 .card-header{
     background-image: url('../img/oxo-white.svg');

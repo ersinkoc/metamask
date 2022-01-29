@@ -45,14 +45,6 @@
 		            <li class="nav-item">
 		                <a class="nav-link" href="#">Profile</a>
 		            </li>
-		            <li class="nav-item dropdown">
-		                <a class="nav-link dropdown-toggle" href="#" id="nav_switch_chain" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Switch Chain</a>
-		                <div class="dropdown-menu" aria-labelledby="nav_switch_chain">
-		                    <a class="dropdown-item" data-cmd="ChangeNetwork" data-id="1881" data-param='{"chainId":1881}'>OXO Main Net</a>
-		                    <a class="dropdown-item" data-cmd="ChangeNetwork" data-id="91881" data-param='{"chainId":91881}'>OXO Test Net</a>
-		                    <a class="dropdown-item" data-cmd="ChangeNetwork" data-id="1" data-param='{"chainId":1}'>Ethereum</a>
-		                </div>
-		            </li>
 		        </ul>
 		        <form class="form-inline my-2 my-lg-0">
 		        	<a href="#" class="btn btn-sm bg-white">
@@ -82,11 +74,10 @@
 		            <span class="badge badge-pill bg-light align-text-bottom">27</span>
 		        </a> -->
 		        <a class="nav-link" data-toggle="tab" href="#wallet">Wallet</a>
+		        <a class="nav-link" data-toggle="tab" href="#create_wallet">Create Wallet</a>
 		        <a class="nav-link" data-toggle="tab" href="#stake">Stake</a>
 		        <a class="nav-link" data-toggle="tab" href="#token_information">Token Information</a>
-		        <a class="nav-link" href="#">Link</a>
-		        <a class="nav-link" href="#">Link</a>
-		        <a class="nav-link" href="#">Link</a>
+		        <!-- <a class="nav-link" href="#">Link</a> -->
 		    </nav>
 		</div>
 		<!-- Sub Bar -->
@@ -128,15 +119,13 @@
 											</dl>
 										</div>
 										<div class="col-lg-6 col-sm-12">
-											<h6 class="border-bottom border-gray pb-2 mb-3">Networks</h6>
-											<div class="btn-group">
-												<a href="#" class="btn btn-secondary" data-cmd="ChangeNetwork" data-id="1881" data-param='{"chainId":1881}'>OXO Main Net</a>
-												<a href="#" class="btn btn-secondary" data-cmd="ChangeNetwork" data-id="91881" data-param='{"chainId":91881}'>OXO Test Net</a>
-												<a href="#" class="btn btn-secondary" data-cmd="ChangeNetwork" data-id="1" data-param='{"chainId":1}'>Ethereum Main Net</a>
-											</div>
-											
 											<h6 class="border-bottom border-gray pb-2 mt-3 mb-3">Last Block Number</h6>
 											<h4 class="block-number" data-blocknumber>0</h4>
+
+											<h6 class="border-bottom border-gray pb-2 mb-3">Networks</h6>
+											<div id="NetworkList" class="list-group">
+											</div>
+
 										</div>
 									</div>
 								</div>
@@ -297,7 +286,7 @@
 							<!-- card -->
 						</div>
 						<!-- TAB: Token Information -->
-						<!-- TAB: aaaaa -->
+						<!-- TAB: Stake Token -->
 						<div class="tab-pane fade" id="stake" role="tabpanel" aria-labelledby="nav-contact-tab">
 							<div class="row">
 								<div class="col-lg-7 col-sm-12">
@@ -321,7 +310,55 @@
 								</div>
 							</div>
 						</div>
-						<!-- TAB: aaaaa -->
+						<!-- TAB: Stake Token -->
+						<!-- TAB: Create Wallet -->
+						<div class="tab-pane fade" id="create_wallet" role="tabpanel" aria-labelledby="nav-contact-tab">
+							<!-- card -->
+							<div class="card-block">
+								<div class="d-flex align-items-center p-3 mt-3 text-white-50 bg-purple rounded box-shadow">
+									<div class="card-header lh-100">
+										<h6 class="mb-0 text-white lh-100">Create New Wallet</h6>
+										<small>OXO Wallet Generator</small>
+									</div>
+								</div>
+								<div class="mb-3 p-3 bg-white rounded box-shadow">
+									<div class="row mb-3">
+										<div class="col-md-8 col-sm-12">
+											<div class="form-group">
+												<label>Wallet Address</label>
+												<div class="input-group">
+													<input type="text" class="form-control" placeholder="0x" readonly id="NewWalletAddress">
+													<div class="input-group-append">
+														<button class="btn btn-sm bg-purple text-white copy" data-clipboard-target="#NewWalletAddress">
+															<i class="far fa-copy"></i>
+														</button>
+													</div>
+												</div>
+											</div>
+											<div class="form-group">
+												<label>Private Key</label>
+												<div class="input-group">
+													<input type="text" class="form-control" placeholder="0x" readonly id="NewWalletPKey">
+													<div class="input-group-append">
+														<button class="btn btn-sm bg-purple text-white copy" data-clipboard-target="#NewWalletPKey">
+															<i class="far fa-copy"></i>
+														</button>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-4 col-sm-12">
+											<button data-cmd="generateWallet" data-param='{}' class="btn btn-sm btn-block bg-purple text-white">
+												<i class="fas fa-fingerprint"></i> Generate Wallet
+											</button>
+										</div>
+									</div>
+
+								</div>
+							</div>
+							<!-- card -->
+						</div>
+						<!-- TAB: Create Wallet -->
 						<!-- TAB: aaaaa -->
 						<div class="tab-pane fade" id="xxxxxx" role="tabpanel" aria-labelledby="nav-contact-tab">
 
