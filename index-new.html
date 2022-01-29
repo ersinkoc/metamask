@@ -11,7 +11,7 @@
 	<!-- Stylesheet -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css" integrity="sha512-T584yQ/tdRR5QwOpfvDfVQUidzfgc2339Lc8uBDtcp/wYu80d7jwBgAxbyMh0a9YM9F8N3tdErpFI8iaGx6x5g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-	<link rel="stylesheet" href="dist/css/app.css?v=29012022_1" />
+	<link rel="stylesheet" href="dist/css/app.css?v=29012022_2" />
 	<!-- Stylesheet -->
 </head>
 <body class="bg-light not-connected transition">
@@ -170,7 +170,7 @@
 															<i class="fas fa-arrow-alt-circle-up"></i>
 															Send <span data-token-symbol>**</span>
 														</a>
-														<a href="" class="btn btn-purple-outline">
+														<a href="#" data-cmd="Receive" data-param='{}' class="btn btn-purple-outline">
 															<i class="fas fa-arrow-alt-circle-down"></i>
 															Receive <span data-token-symbol>**</span>
 														</a>
@@ -380,10 +380,37 @@
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.10/dist/sweetalert2.all.min.js" integrity="sha256-hw7v8jZF/rFEdx1ZHepT4D73AFTHLu/P9kEyrNesRyc=" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.9/clipboard.min.js"></script>
 		
-		<script defer src="dist/js/app.js?v=29012022_1"></script>
+		<script defer src="dist/js/qrious.js"></script>
+		<script defer src="dist/js/app.js?v=29012022_2"></script>
 		<!-- Script -->
 	</div>
 	<!-- MASTER APP -->
+
+	<!-- Get QR -->
+	<div class="modal fade" id="QRModal" tabindex="-1" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title">Receive <span data-token-symbol>**</span></h5>
+	                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	                    <span aria-hidden="true">&times;</span>
+	                </button>
+	            </div>
+	            <div class="modal-body">
+                    <div class="d-flex padding justify-content-center align-items-center">
+                        	<canvas id="qrcode"></canvas>
+                    </div>
+                    <div class="d-flex padding justify-content-center align-items-center">
+                        <strong class="copy text-center mt-3" data-walletid data-clipboard-text="" data-toggle="tooltip" data-placement="top" title="Click to copy Wallet ID">--</strong>
+                    </div>
+	            </div>
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+	<!-- Get QR -->
 
 	<!-- Wallet Connections -->
 	<div class="modal fade" id="WalletConnectionModal" tabindex="-1" aria-hidden="true">
@@ -449,7 +476,6 @@
 	            </div>
 	            <div class="modal-footer">
 	                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-	                <button type="button" class="btn btn-primary">Save changes</button>
 	            </div>
 	        </div>
 	    </div>

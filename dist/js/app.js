@@ -235,6 +235,27 @@ $(document).ready(function() {
             /*--------------------------------------------------
 
             --------------------------------------------------*/
+            _generateQR: function(_address){
+                var qrcode = new QRious({
+                    element         : document.getElementById("qrcode"),
+                    background      : '#ffffff',
+                    backgroundAlpha : 1,
+                    foreground      : '#6f42c1',
+                    foregroundAlpha : 1,
+                    level           : 'H', // 'L' - 'M' - 'Q' - 'H' 
+                    padding         : 5,
+                    mime            :'image/png',
+                    size            : 220,
+                    value           : _address
+                });
+
+                $('#QRModal').modal('show');
+                $('#QRModal strong[data-walletid]').html( _address )
+                    .attr('data-clipboard-text', _address)
+            },
+            /*--------------------------------------------------
+
+            --------------------------------------------------*/
             _formatToCurrency: function(amount, Fixed){
                 return "$" + amount.toFixed(Fixed).replace(/\d(?=(\d{3})+\.)/g, "$&,");
             },
@@ -857,6 +878,9 @@ $(document).ready(function() {
         console.log('Param: ', $Data)
 
         switch($Command) {
+            case 'Receive': 
+                $.OXO.tools._generateQR( $.OXO.data.currentAccount );
+                break;
             case 'generateWallet':
                 $.OXO.GenerateWallet().then(function(result) {
                     $('#NewWalletAddress').val( result.address );
