@@ -51,6 +51,7 @@ $(document).ready(function() {
             CurrentSymbol   : 'MONEY',
             TokenUSDPrice   : 0.025,
             NetworkInfo     : [],
+            tokenDecimal    : 8,
             LastBlockNumber : null
         },
         /* ########################
