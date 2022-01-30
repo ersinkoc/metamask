@@ -292,27 +292,62 @@
 						<!-- TAB: Token Information -->
 						<!-- TAB: Stake Token -->
 						<div class="tab-pane fade" id="stake" role="tabpanel" aria-labelledby="nav-contact-tab">
-							<div class="row">
-								<div class="col-lg-7 col-sm-12">
-									<!-- card -->
-									<div class="card-block">
-										<div class="d-flex align-items-center p-3 mt-3 text-white-50 bg-purple rounded box-shadow">
-											<div class="card-header lh-100">
-												<h6 class="mb-0 text-white lh-100">Stake OXO</h6>
-												<small>The most advantageous earnings for OXO Token</small>
+							<!-- card -->
+							<div class="card-block">
+								<div class="d-flex align-items-center p-3 mt-3 text-white-50 bg-purple rounded box-shadow">
+									<div class="card-header lh-100">
+										<h6 class="mb-0 text-white lh-100">Stake OXO</h6>
+										<small>The most advantageous earnings for OXO Token</small>
+									</div>
+								</div>
+								<div class="mb-3 p-3 bg-white rounded box-shadow">
+									<div class="row mb-3">
+										<div class="col-md-12 col-sm-12">
+											<div class="form-group">
+												<label>Stake Amount</label>
+												<div class="input-group">
+													<input type="text" id="stakeAmount" data-maskmoney value="10.000" class="form-control text-right" />
+													<div class="input-group-append">
+														<button data-cmd="stakeOXO" data-param='{}' class="btn btn-sm btn-block bg-purple text-white">
+															<i class="far fa-handshake"></i> Stake <span data-token-symbol>**</span> Now
+														</button>
+													</div>
+												</div>
 											</div>
 										</div>
-										<div class="mb-3 p-3 bg-white rounded box-shadow">
-											<h6 class="border-bottom border-gray pb-2 mb-0">Lorem Ipsum Dolor Sit Amet</h6>
-			
+										<div class="col-md-6 pre-tokens">
+											<a href="#" Xdata-cmd="CopyTokenToInfoInput" data-param='{}'>View All Staked Contract</a>
+										</div>
+										<div class="col-md-6 pre-tokens text-right">
+											<a href="#" Xdata-cmd="CopyTokenToInfoInput" data-param='{}'>Stake All <span data-wallet-balance></span></a>
 										</div>
 									</div>
-									<!-- card -->
-								</div>
-								<div class="col-lg-5 col-sm-12">
-									
 								</div>
 							</div>
+							<!-- card -->
+
+							<!-- card -->
+							<div class="card-block">
+								<div class="d-flex align-items-center p-3 mt-3 text-white-50 bg-purple rounded box-shadow">
+									<div class="card-header lh-100">
+										<h6 class="mb-0 text-white lh-100">Your Stakes & Earnings</h6>
+										<small>The most advantageous earnings for OXO Token</small>
+									</div>
+								</div>
+								<div class="mb-3 p-3 bg-white rounded box-shadow">
+									<div class="row">
+										<div class="col-lg-6 col-sm-12">
+											<h6 class="border-bottom border-gray pb-2 mb-3">Your Stakes</h6>
+
+										</div>
+										<div class="col-lg-6 col-sm-12">
+											<h6 class="border-bottom border-gray pb-2 mb-3">Stake Earnings</h6>
+
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- card -->
 						</div>
 						<!-- TAB: Stake Token -->
 						<!-- TAB: Create Wallet -->

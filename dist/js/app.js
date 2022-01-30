@@ -388,12 +388,18 @@ $(document).ready(function() {
             /*--------------------------------------------------
 
             --------------------------------------------------*/
+            warning : function(Msg){ Swal.fire({title: 'Warning', text: Msg, icon: 'warning'}); },
+            /*--------------------------------------------------
+
+            --------------------------------------------------*/
             success : function(Msg){ Swal.fire({title: 'Success', text: Msg, icon: 'success'}); },
             /*--------------------------------------------------
 
             --------------------------------------------------*/
             toggleConnection: function(){
                 console.log("OXO.tools.toggleConnection()");
+                console.log('ethereum.selectedAddress', ethereum.selectedAddress)
+                console.log('$.OXO.data.currentAccount', $.OXO.data.currentAccount)
                 
                 if($.OXO.data.IsTest == true){
                     $Body.removeClass('not-connected').addClass('connected');
@@ -409,6 +415,11 @@ $(document).ready(function() {
                         $.OXO.connect();
                     };
                 }else{
+                    $('.ConnectStatus').html('Connect Wallet').attr("disabled", true).removeClass('bg-success').addClass('bg-danger');
+                }
+
+                if(ethereum.selectedAddress === null){
+                    $Body.removeClass('connected').addClass('not-connected');
                     $('.ConnectStatus').html('Connect Wallet').attr("disabled", true).removeClass('bg-success').addClass('bg-danger');
                 }
 
@@ -483,20 +494,29 @@ $(document).ready(function() {
                 handleChainChanged;
             })
             .catch((err) => {
-                console.error(err);
+                console.error('net_version', err);
                 return false
             });
 
             ethereum.request({ method: "eth_requestAccounts" }).then(handleAccountsChanged)
             .catch((err) => {
+                if(err.code === -32002){
+                    $.OXO.tools.warning('Open your MetaMask wallet and approve pending connection request.');
+                    $.OXO.tools.toggleConnection();
+                    return false;
+                };
+
                 if (err.code === 4001) {
                     // EIP-1193 userRejectedRequest error
                     // If this happens, the user rejected the connection request.
                     $.OXO.tools.error('You refused to connect Metamask');
                     console.log("Please connect to MetaMask.");
+                    
+                    $.OXO.tools.toggleConnection();
+                    $('#WalletConnectionModal').modal('show');
                     // $("#status").html("You refused to connect Metamask");
-                } else {
-                    console.error(err);
+                } else {                    
+                    console.error('eth_requestAccounts', err);
                     return false
                 }
             });
@@ -667,6 +687,7 @@ $(document).ready(function() {
         if (accounts.length === 0) {
             console.log('handleAccountsChanged 0: ', 'Connect with Metamask');
             $.OXO.tools.error('Please connect to MetaMask');
+            $.OXO.tools.toggleConnection();
             // $("#enableMetamask").html("Connect with Metamask");
             // $("#balance").html("...");
             // $("#networkid").html("...");
@@ -692,10 +713,13 @@ $(document).ready(function() {
                 $.OXO.request._getChainId();
                 $.OXO.tools.UpdateBlockNumber();
             }
-        }
-        console.log(
-            "WalletAddress in HandleAccountChanged [" + $.OXO.data.currentAccount + "]"
-        );
+        };
+
+        console.log("WalletAddress in HandleAccountChanged [" + $.OXO.data.currentAccount + "]");
+        $.OXO.tools.toggleConnection();
+        if(($("#WalletConnectionModal").data('bs.modal') || {})._isShown){
+            $("#WalletConnectionModal").modal('hide');
+        };
     };
 
 
