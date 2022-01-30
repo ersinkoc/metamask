@@ -10,9 +10,19 @@ let contractSymbol,contractDecimals,contractFirst,contractName;
 $(document).ready(function() {
     let $Body = $('body');
 
+    $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
+        let TabId = $(e.target).attr('href');
+
+        if(TabId =='#wallet'){
+            /* Wallet Transactions */
+            console.log('-------', $.OXO.data.currentAccount)
+            $.Explorer.request._getLatestTransaction( $.OXO.data.currentAccount );
+        }
+    })
+
     /*
         OXO.App
-        $.OXO.data.tokenDecimal
+        $.OXO.data.LastBlockNumber
     */
     $.OXO = {
         /* ########################
@@ -41,12 +51,20 @@ $(document).ready(function() {
             CurrentSymbol   : 'MONEY',
             TokenUSDPrice   : 0.025,
             NetworkInfo     : [],
-            tokenDecimal    : 8
+            LastBlockNumber : null
         },
         /* ########################
             APP INITIALIZE
         ######################## */
         init: function(){
+            Template7.registerHelper('ConvertWei', function (TextString){
+                var Text    = eval(TextString);
+                return $.OXO.tools.ConvertWei(TextString) + $.OXO.data.CurrentSymbol;
+            });
+            Template7.registerHelper('ConvertTime', function (TextString){
+                return (new Date( eval(TextString) ) ).toUTCString();
+            });
+
             /*--------------------------------------------------
                 OXO: Init App
             --------------------------------------------------*/
@@ -202,7 +220,8 @@ $(document).ready(function() {
             _getBlockNumber: function(){
                 console.log("$.OXO.request._getBlockNumber()");
                 return new Promise(function (resolve, reject) {
-                    resolve( $.OXO.Web3.eth.getBlockNumber() );
+                    $.OXO.data.LastBlockNumber = $.OXO.Web3.eth.getBlockNumber();
+                    resolve( $.OXO.data.LastBlockNumber );
                 });
             },
             /*--------------------------------------------------
@@ -485,10 +504,53 @@ $(document).ready(function() {
             // $.OXO.Tools.toggleConnection();
         }
     };
+
+    /*
+        Explorer API
+        $.Explorer.request._getLatestTransaction(address);
+    */
+    $.Explorer = {
+        data: {
+            ApiPath: 'https://explorer.testnet.oxochain.com/'
+        },
+
+        request: {
+            _getLatestTransaction: function(_address){
+                if(typeof _address == undefined || typeof _address ==null){
+                    return false
+                };
+
+                Promise.all([
+                    $.getJSON($.Explorer.data.ApiPath + "api?module=account&action=txlist&address="+ _address)
+                ]).then((results) => {
+                    $('#LatestTransactions body tr').remove();
+
+                    let HTMLTemplate = Template7.compile(`
+                    {{#each result}}
+                        <tr> 
+                            <td>
+                                <div class="block_hash">{{blockHash}}</div>
+                                <div class="from_to">
+                                    <span>{{from}}</span>
+                                    <span>{{to}}</span>
+                                </di>
+                            </td>
+                            <td>{{ConvertTime timeStamp}}</td>
+                            <td align="right">{{ConvertWei value}}</td>
+                        </tr>
+                    {{/each}}`);
+
+                    $('#LatestTransactions tbody').append( HTMLTemplate( results[0] ) );
+                });
+            }
+        }
+    }
+
+
+    /*
+        OXO.App Init
+    */
     $.OXO.init();
-
-
-
 
 
 

@@ -9,8 +9,8 @@
 	<!-- Meta -->
 	
 	<!-- Stylesheet -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/css/bootstrap.min.css" integrity="sha512-T584yQ/tdRR5QwOpfvDfVQUidzfgc2339Lc8uBDtcp/wYu80d7jwBgAxbyMh0a9YM9F8N3tdErpFI8iaGx6x5g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="stylesheet" href="dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="dist/css/all.min.css" />
 	<link rel="stylesheet" href="dist/css/app.css?v=29012022_3" />
 	<!-- Stylesheet -->
 </head>
@@ -183,12 +183,7 @@
 															Latest Transactions
 														</div>
 														<div class="widget-body">
-															<ul id="LatestTransactions">
-																<li>lorem ipsum dolor 1</li>
-																<li>lorem ipsum dolor 2</li>
-																<li>lorem ipsum dolor 3</li>
-																<li>lorem ipsum dolor 4</li>
-															</ul>
+
 														</div>
 													</div>
 													<!-- Widget -->
@@ -216,10 +211,20 @@
 											</div>
 										</div>
 										<div class="mb-3 p-3 bg-white rounded box-shadow">
-<!-- 											<div class="lh-100">
-												<h6 class="mb-0 lh-100">Current Balance</h6>
+											<div class="table-responsive">
+												<table id="LatestTransactions" class="table table-sm">
+													<thead>
+														<tr>
+															<th>Hash / From-To</th>
+															<th>Date</th>
+															<th>Value</th>
+														</tr>
+													</thead>
+													<tbody>
+														
+													</tbody>
+												</table>
 											</div>
-											<h1 id="wallet_balance">...</h1> -->
 										</div>
 									</div>
 									<!-- card -->
@@ -370,15 +375,16 @@
 		<!-- Content -->
 
 		<!-- Script -->
-		<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-		<script src="https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js"></script>
+		<script src="dist/js/web3.min.js"></script>
+		<script src="dist/js/detect-provider.min.js"></script>
 		
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js" integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.3.10/dist/sweetalert2.all.min.js" integrity="sha256-hw7v8jZF/rFEdx1ZHepT4D73AFTHLu/P9kEyrNesRyc=" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.9/clipboard.min.js"></script>
+		<script src="dist/js/popper.min.js"></script>
+		<script src="dist/js/jquery.min.js"></script>
+		<script src="dist/js/bootstrap.min.js"></script>
+		<script src="dist/js/sweetalert2.all.min.js"></script>
+		<script src="dist/js/clipboard.min.js"></script>
 		
+		<script defer src="dist/js/template7.js"></script>
 		<script defer src="dist/js/qrious.js"></script>
 		<script defer src="dist/js/maskmoney.js"></script>
 		<script defer src="dist/js/app.js?v=29012022_3"></script>
