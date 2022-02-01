@@ -387,23 +387,23 @@ $(document).ready(function() {
                 }
             },
             /*--------------------------------------------------
-
+                -
             --------------------------------------------------*/
             error   : function(Msg){ Swal.fire({title: 'Error', text: Msg, icon: 'error'}); },
             /*--------------------------------------------------
-
+                -
             --------------------------------------------------*/
             info    : function(Msg){ Swal.fire({title: 'Info', text: Msg, icon: 'info'}); },
             /*--------------------------------------------------
-
+                -
             --------------------------------------------------*/
             warning : function(Msg){ Swal.fire({title: 'Warning', text: Msg, icon: 'warning'}); },
             /*--------------------------------------------------
-
+                -
             --------------------------------------------------*/
             success : function(Msg){ Swal.fire({title: 'Success', text: Msg, icon: 'success'}); },
             /*--------------------------------------------------
-
+                -
             --------------------------------------------------*/
             toggleConnection: function(){
                 console.log("$.OXO.tools.toggleConnection()");
