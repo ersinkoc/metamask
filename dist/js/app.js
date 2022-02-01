@@ -407,6 +407,13 @@ $(document).ready(function() {
             --------------------------------------------------*/
             toggleConnection: function(){
                 console.log("$.OXO.tools.toggleConnection()");
+                
+                if(typeof window.ethereum!== "undefined"){
+                    $.OXO.tools.error('MetaMask Not Found!');
+                    console.log('toggleConnection ethereum not found');
+                    return false
+                };
+
                 console.log('ethereum.selectedAddress', ethereum.selectedAddress)
                 console.log('$.OXO.data.currentAccount', $.OXO.data.currentAccount)
                 
