@@ -60,10 +60,19 @@ $(document).ready(function() {
         init: function(){
             Template7.registerHelper('ConvertWei', function (TextString){
                 var Text    = eval(TextString);
-                return $.OXO.tools.ConvertWei(TextString) + $.OXO.data.CurrentSymbol;
+                return $.OXO.tools.ConvertWei(TextString) +' '+ $.OXO.data.CurrentSymbol;
             });
             Template7.registerHelper('ConvertTime', function (TextString){
-                return (new Date( eval(TextString) ) ).toUTCString();
+                return new Date( eval(TextString) ).toUTCString();
+            });
+            Template7.registerHelper('PayWay', function (From, To){
+                let $From   = eval(From);
+                let $To     = eval(To);
+                if($.OXO.data.currentAccount==$From){
+                    return '<span class="badge badge-danger">OUT</span>';
+                }else{
+                    return '<span class="badge badge-success">IN</span>';
+                }
             });
 
             /*--------------------------------------------------
@@ -397,7 +406,7 @@ $(document).ready(function() {
 
             --------------------------------------------------*/
             toggleConnection: function(){
-                console.log("OXO.tools.toggleConnection()");
+                console.log("$.OXO.tools.toggleConnection()");
                 console.log('ethereum.selectedAddress', ethereum.selectedAddress)
                 console.log('$.OXO.data.currentAccount', $.OXO.data.currentAccount)
                 
@@ -427,6 +436,84 @@ $(document).ready(function() {
                     $("#WalletConnectionModal").modal('hide');
                 }
                 return true;
+            },
+            /*--------------------------------------------------
+                Add network to MetaMask
+            --------------------------------------------------*/
+            addToMetamask: async function(data) {
+                console.log("$.OXO.tools.addToMetamask("+ data +")");
+
+                try {
+                    // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+                    const wasAdded = await ethereum.request({
+                        method: "wallet_watchAsset",
+                        params: {
+                            type: "ERC20", // Initially only supports ERC20, but eventually more!
+                            options: {
+                                address     : data.tokenAddress, // The address that the token is at.
+                                symbol      : data.tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
+                                decimals    : data.tokenDecimals, // The number of decimals in the token
+                                image       : data.tokenImage, // A string url of the token logo
+                            },
+                        },
+                    });
+
+                    if (wasAdded) {
+                        $('[data-cmd="addToMetaMask"]').html('Token Added To MetaMask');
+                        $.OXO.tools.success('Token added to MetaMask');
+                    } else {
+                        console.log("Your loss!");
+                    }
+                } catch (error) { $.OXO.tools.error(error); }
+            },
+            /*--------------------------------------------------
+                Change Network
+            --------------------------------------------------*/
+            ChangeNetwork: async function (_chainId) {
+                console.log("$.OXO.tools.ChangeNetwork(ChainId);");
+                console.log("ChangeNetwork("+ arguments +")");
+
+                if ( $.OXO.data.NetworkInfo[_chainId] != undefined) {
+                    var HexChainId = $.OXO.Web3.utils.toHex(_chainId); //
+                    try {
+                        await ethereum.request({
+                            method: "wallet_switchEthereumChain",
+                            params: [{ chainId: HexChainId }], // Hexadecimal version of ..., prefixed with 0x
+                        });
+                    } catch (error) {
+                        if (error.code === 4001) {
+                            $.OXO.tools.error('You canceled the switch network.');
+                            return false
+                        }
+                        if (error.code === 4902) {
+                            try {
+                                await ethereum.request({
+                                    method: "wallet_addEthereumChain",
+                                    params: [{
+                                        chainId: HexChainId, // Hexadecimal version of ... , prefixed with 0x
+                                        chainName: $.OXO.data.NetworkInfo[_chainId].chainName,
+                                        nativeCurrency: {
+                                            name: $.OXO.data.NetworkInfo[_chainId].name,
+                                            symbol: $.OXO.data.NetworkInfo[_chainId].symbol,
+                                            decimals: $.OXO.data.NetworkInfo[_chainId].decimals,
+                                        },
+                                        rpcUrls: [ 
+                                            $.OXO.data.NetworkInfo[_chainId].rpcUrls[0]
+                                        ],
+                                        blockExplorerUrls: [
+                                            $.OXO.data.NetworkInfo[_chainId].blockExplorerUrls[0],
+                                        ],
+                                        iconUrls: [ 
+                                            $.OXO.data.NetworkInfo[_chainId].iconUrls
+                                        ],
+                                    }, ],
+                                });
+                            } catch (addError) { $.OXO.tools.error('Did not add network'); }
+                        }
+                    }
+                }else{
+                    console.log('NetworkInfo[_chainId]=undefined');
+                }
             },
             /*--------------------------------------------------
 
@@ -549,11 +636,13 @@ $(document).ready(function() {
                     let HTMLTemplate = Template7.compile(`
                     {{#each result}}
                         <tr> 
+                            <td>{{PayWay from to}}</td>
                             <td>
-                                <div class="block_hash">{{blockHash}}</div>
+                                <div class="block_hash" data-link="tx">{{blockHash}}</div>
                                 <div class="from_to">
-                                    <span>{{from}}</span>
-                                    <span>{{to}}</span>
+                                    <span data-link="address">{{from}}</span>
+                                    <i class="fas fa-long-arrow-alt-right"></i>
+                                    <span data-link="address">{{to}}</span>
                                 </di>
                             </td>
                             <td>{{ConvertTime timeStamp}}</td>
@@ -652,7 +741,7 @@ $(document).ready(function() {
             let $ChainData = $.OXO.data.NetworkInfo[$.OXO.data.chainId];
 
             $('#ChainName').html( $ChainData.chainName );
-            $('#ChainId').html( $ChainData.chainId );
+            $('#ChainId').html( parseInt($ChainData.chainId, 16) + ' ('+ $ChainData.chainId +')');
             $('#TokenName').html( $ChainData.name );
             $('#TokenSymbol').html( $ChainData.symbol );
             $('#TokenDecimal').html( $ChainData.decimals );
@@ -805,168 +894,6 @@ $(document).ready(function() {
         });
     };
 
-    /*
-        
-    */
-    async function addBlacklist() {
-        console.log("addBlacklist()");
-        toAddress = $("#toAddress").val().trim();
-        if ($.OXO.Web3.utils.isAddress(toAddress)) {
-            try {
-                $.OXO.Web3.eth.getCode(toAddress).then(function(result) {
-                    if (result == "0x") {
-                        $.OXO.stake._getStakeToken().then(function(){
-                            
-                            $.OXO.data.stakeToken.methods
-                                .addToBlacklist(toAddress)
-                                .send({ 
-                                    from: $.OXO.Web3.givenProvider.selectedAddress 
-                                }).then(function(result) {
-                                    console.log('addBlacklist: ', result);
-                                });
-                        });
-                    } else {
-                        console.log("Address is a contract");
-                        $("#toAddress").val("0xdead000123");
-                    }
-                });
-            } catch (error) {
-                $("#toAddress").val("0xdead000999");
-                console.log("Error: " + error);
-            }
-        }
-    };
-
-    /*
-        
-    */
-    async function removeBlacklist() {
-        console.log("removeBlacklist()");
-        toAddress = $("#toAddress").val().trim();
-        if ($.OXO.Web3.utils.isAddress(toAddress)) {
-            try {
-                $.OXO.Web3.eth.getCode(toAddress).then(function(result) {
-                    if (result == "0x") {
-                        getStakeToken();
-                        $.OXO.data.stakeToken.methods
-                            .removeFromBlacklist(toAddress)
-                            .send({ 
-                                from: $.OXO.Web3.givenProvider.selectedAddress 
-                            }).then(function(result) {
-                                console.log(result);
-                            });
-                    } else {
-                        console.log("Address is a contract");
-                        $("#toAddress").val("0xdead000123");
-                    }
-                });
-            } catch (error) {
-                $("#toAddress").val("0xdead000999");
-                console.log("Error: " + error);
-            }
-        }
-    };
-
-    /*
-        
-    */
-    async function totalRewarded() {
-        console.log("totalRewarded()");
-        try {
-            getStakeToken();
-            
-            $.OXO.data.stakeToken.methods
-                .totalRewarded()
-                .call()
-                .then(function(result) {
-                    $("#totalRewardedSpan").html( $.OXO.Web3.utils.fromWei(result, "ether") );
-                    console.log(result);
-                });
-        } catch (error) {
-            console.log("Error: " + error);
-        }
-    };
-
-    /*
-        
-    */
-    async function addToMetamask(data) {
-        console.log("addToMetamask() => ", data );
-
-        try {
-            // wasAdded is a boolean. Like any RPC method, an error may be thrown.
-            const wasAdded = await ethereum.request({
-                method: "wallet_watchAsset",
-                params: {
-                    type: "ERC20", // Initially only supports ERC20, but eventually more!
-                    options: {
-                        address     : data.tokenAddress, // The address that the token is at.
-                        symbol      : data.tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
-                        decimals    : data.tokenDecimals, // The number of decimals in the token
-                        image       : data.tokenImage, // A string url of the token logo
-                    },
-                },
-            });
-
-            if (wasAdded) {
-                $('[data-cmd="addToMetaMask"]').html('Token Added To MetaMask');
-                $.OXO.tools.success('Token added to MetaMask');
-            } else {
-                console.log("Your loss!");
-            }
-        } catch (error) { $.OXO.tools.error(error); }
-    };
-
-
-    /*
-        
-    */
-    async function ChangeNetwork(_chainId) {
-        console.log("ChangeNetwork(Arguments)");
-        console.log(arguments);
-
-        if ( $.OXO.data.NetworkInfo[_chainId] != undefined) {
-            var HexChainId = $.OXO.Web3.utils.toHex(_chainId); //
-            try {
-                await ethereum.request({
-                    method: "wallet_switchEthereumChain",
-                    params: [{ chainId: HexChainId }], // Hexadecimal version of ..., prefixed with 0x
-                });
-            } catch (error) {
-                if (error.code === 4001) {
-                    $.OXO.tools.error('You canceled the switch network.');
-                    return false
-                }
-                if (error.code === 4902) {
-                    try {
-                        await ethereum.request({
-                            method: "wallet_addEthereumChain",
-                            params: [{
-                                chainId: HexChainId, // Hexadecimal version of ... , prefixed with 0x
-                                chainName: $.OXO.data.NetworkInfo[_chainId].chainName,
-                                nativeCurrency: {
-                                    name: $.OXO.data.NetworkInfo[_chainId].name,
-                                    symbol: $.OXO.data.NetworkInfo[_chainId].symbol,
-                                    decimals: $.OXO.data.NetworkInfo[_chainId].decimals,
-                                },
-                                rpcUrls: [ 
-                                    $.OXO.data.NetworkInfo[_chainId].rpcUrls[0]
-                                ],
-                                blockExplorerUrls: [
-                                    $.OXO.data.NetworkInfo[_chainId].blockExplorerUrls[0],
-                                ],
-                                iconUrls: [ 
-                                    $.OXO.data.NetworkInfo[_chainId].iconUrls
-                                ],
-                            }, ],
-                        });
-                    } catch (addError) { $.OXO.tools.error('Did not add network'); }
-                }
-            }
-        }else{
-            console.log('NetworkInfo[_chainId]=undefined');
-        }
-    };
 
     /*
         Command Palette
@@ -1070,17 +997,11 @@ $(document).ready(function() {
 
                 break;
             case 'addToMetaMask':
-                addToMetamask( $Data );
+                $.OXO.tools.addToMetamask( $Data );
                 break;
             case 'ChangeNetwork':
                 let $NetworkPort 
-                ChangeNetwork( $Data.chainId );
-                break;
-            case 'addToBlackList':
-                addBlacklist();
-                break;
-            case 'RemoveFromBlackList':
-                removeBlacklist();
+                $.OXO.tools.ChangeNetwork( $Data.chainId );
                 break;
             case 'CopyTokenToInfoInput':
                 $('#contractaddress').val( $Data.value );
@@ -1091,21 +1012,28 @@ $(document).ready(function() {
         /* Act on the event */
     });
 
-    $("#toBlacklist").click(function() {
-        addBlacklist();
+    /*
+        -
+    */
+    $Body.on('click', '[data-link]', function(event) {
+        event.preventDefault();
+        let $ExpURL = $.OXO.data.NetworkInfo[$.OXO.data.chainId].blockExplorerUrls[0];
+        let $Params = $(this).data('link');
+        let $Data   = $(this).text().trim();
+
+        switch($Params) {
+            case 'tx':
+                window.open($ExpURL+'/tx/'+$Data);
+                // https://explorer.testnet.oxochain.com/tx/0xbfba8c34e551d08671d269e917cc13bd94a9d696c1dbcb8bcc81f6472d51b14a
+                break;
+            case 'address':
+                window.open($ExpURL+'/address/'+$Data);
+                // https://explorer.testnet.oxochain.com/address/0xe0289c0c19a3e3423adbf4c328ce8e6495400000
+                break;
+            default:
+        }
     });
 
-    $("#removeBlacklist").click(function() {
-        removeBlacklist();
-    });
-
-    $("#totalRewarded").click(function() {
-        totalRewarded();
-    });
-
-    $("#Send5Money").click(function() {
-        Send5Money();
-    });
 
     $('[data-toggle="offcanvas"]').on('click', function () {
         $('.offcanvas-collapse').toggleClass('open')

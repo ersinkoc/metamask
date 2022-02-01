@@ -322,27 +322,30 @@ a.list-group-item.active {
 	font-size: 12px;
 }
 #LatestTransactions .block_hash {
-	font-weight: 600;
+    font-weight: 600;
+    padding: 3px;
+    font-size: 11px;
 }
 #LatestTransactions .from_to {
 
 }
-#LatestTransactions .from_to span:nth-child(1){
+#LatestTransactions .from_to span{
 	display: inline-block;
+	border: 1px solid #c5c5c5;
+	border-radius: 4px;
+	font-size: 11px;
+	padding: 4px;
+}
+#LatestTransactions .from_to span:nth-child(1){
 }
 #LatestTransactions .from_to span:nth-child(2){
-	display: inline-block;
-	padding-left: 20px;
 
 }
-#LatestTransactions .from_to span:nth-child(1):after{
-    content: '\f061';
-    font-family: "Font Awesome 5 Free";
-    font-style: normal;
-    font-weight: 900;
-    text-decoration: inherit;
-    color: #1c1c1c;
-    margin: 0px 0px 0px 10px;
+#LatestTransactions .from_to i{
+
+}
+[data-link]{
+	cursor: pointer !important;
 }
 /*----------------------------------------------------------------
 	OXO Buttons
